@@ -1,2 +1,9 @@
+# Mac OS X
+.DS_Store
+
+# Compiler-generated files
+*.pyc
+
+# Image Files
 *.png
 *.jpg
