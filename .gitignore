@@ -4,6 +4,6 @@
 # Compiler-generated files
 *.pyc
 
-# Image Files
-*.png
-*.jpg
+# Image files in top directoy
+/*.png
+/*.jpg

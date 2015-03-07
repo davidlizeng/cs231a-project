@@ -20,9 +20,11 @@
 #         }
 #     return boundRect;
 # }
+
 import cv2
 import cv
 import numpy as np
+import sys
 
 def detectLetters(img):
     img_gray = cv2.cvtColor(img, cv.CV_BGR2GRAY)
@@ -35,7 +37,7 @@ def detectLetters(img):
     #cv2.imwrite('thresh.png', img_threshold)
     element = cv2.getStructuringElement(cv2.MORPH_RECT, (3, 4) )
     morphed = cv2.morphologyEx(img_threshold, cv.CV_MOP_CLOSE, element)
-    cv2.imwrite('morph.png', morphed)
+    cv2.imwrite('images/morph.png', morphed)
     contours, unused = cv2.findContours(morphed, 0, 1)
     boundRect = []
     for i in xrange(len(contours)):
@@ -45,8 +47,15 @@ def detectLetters(img):
             boundRect.append(appRect)
     return boundRect
 
-img = cv2.imread('equation.png')
-boundRect = detectLetters(img)
-for rect in boundRect:
-    cv2.rectangle(img, (rect[0], rect[1]), (rect[0]+rect[2], rect[1] + rect[3]), (0,255,0))
-cv2.imwrite('eq-morph.png', img)
+def main(argv):
+    imageFile = argv[1] if len(argv) > 1 else 'images/simple1.png'
+    [imageName, extension] = imageFile.split('.')
+    img = cv2.imread(imageFile)
+    print img.shape
+    boundRect = detectLetters(img)
+    for rect in boundRect:
+        cv2.rectangle(img, (rect[0], rect[1]), (rect[0]+rect[2], rect[1] + rect[3]), (0,255,0))
+    cv2.imwrite(imageName + '-morph.' + extension, img)
+
+if __name__ == "__main__":
+    main(sys.argv)
