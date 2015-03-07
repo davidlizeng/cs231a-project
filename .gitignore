@@ -3,3 +3,7 @@
 
 # Compiler-generated files
 *.pyc
+
+# Image files in top directoy
+/*.png
+/*.jpg
