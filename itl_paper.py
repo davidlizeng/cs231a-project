@@ -4,7 +4,7 @@ import numpy as np
 import sys
 import itl_paragraph
 
-IMAGE_FILE = 'images/paper1.png'
+IMAGE_FILE = 'images/paper2.png'
 [IMAGE_NAME, EXTENSION] = IMAGE_FILE.split('.')
 
 def parsePaper(img):
@@ -41,22 +41,20 @@ def parsePaper(img):
                 equationRects.append(rect)
             else:
                 lineRects = itl_paragraph.parseParagraph(img[rect[1]:rect[1]+rect[3],rect[0]:rect[0]+rect[2]])
-                for lineRect in lineRects:
-                    if lineRect[3] > maxLineHeight:
-                        maxLineHeight2 = maxLineHeight
-                        maxLineHeight = lineRect[3]
-                    elif lineRect[3] > maxLineHeight2:
-                        maxLineHeight2 = lineRect[3]
+                lineSize = (rect[3]*1.0)/len(lineRects)
+                if lineSize > maxLineHeight:
+                    maxLineHeight2 = maxLineHeight
+                    maxLineHeight = lineSize
+                elif lineSize > maxLineHeight2:
+                    maxLineHeight2 = lineSize
     for rect in boundRects:
         if rect[2]*rect[3] > 250:
             if not (rect[0]*1.0)/paperWidth > 0.225:
                 isHeader = False
                 lineRects = itl_paragraph.parseParagraph(img[rect[1]:rect[1]+rect[3],rect[0]:rect[0]+rect[2]])
-                for lineRect in lineRects:
-                    print lineRect[3]
-                    if lineRect[3] >= maxLineHeight and lineRect[3] >= maxLineHeight2 * 1.05:
-                        isHeader = True
-                if isHeader:
+                lineSize = (rect[3]*1.0)/len(lineRects)
+                print lineSize
+                if lineSize >= maxLineHeight and lineSize >= maxLineHeight2 * 1.05:
                     headerRects.append(rect)
                 else:
                     textRects.append(rect)
@@ -82,7 +80,7 @@ def parsePaper(img):
 
     for paragraph in paragraphs:
         # TODO do something here
-        if DEBUG and False:
+        if DEBUG:
             cv2.imshow('Paragraph', paragraph)
             cv2.waitKey(0)
             cv2.destroyAllWindows()
