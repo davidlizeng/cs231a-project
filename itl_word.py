@@ -1,22 +1,15 @@
-# Parse one line of text
+# Parse one word of text
 import cv
 import cv2
 import numpy as np
 import sys
 
 DEBUG = False
-IMAGE_FILE = 'images/line1.png'
+IMAGE_FILE = 'images/word1.png'
 [IMAGE_NAME, EXTENSION] = IMAGE_FILE.split('.')
 
-STD_HEIGHT = 20
-
-# Line image img
-def parseLine(img):
-    # Standardize line to have a height of STD_HEIGHT pixels
-    h = img.shape[0]
-    scaleFactor = float(STD_HEIGHT) / h
-    img = cv2.resize(img, (0,0), fx=scaleFactor, fy=scaleFactor)
-
+# Word image img
+def parseWord(img):
     img_gray = cv2.cvtColor(img, cv.CV_BGR2GRAY)
     # blur = cv2.GaussianBlur(img_gray, (5, 5), 0)
     img_lap = cv2.Laplacian(img_gray, cv2.CV_8U)
@@ -25,7 +18,7 @@ def parseLine(img):
         cv2.imwrite(IMAGE_NAME + '-thresh.' + EXTENSION, img_threshold)
 
     # Blur in the horizontal direction to get lines
-    element = cv2.getStructuringElement(cv2.MORPH_RECT, (5, 10))
+    element = cv2.getStructuringElement(cv2.MORPH_RECT, (1, 1))
     morphed = cv2.morphologyEx(img_threshold, cv.CV_MOP_CLOSE, element)
     if DEBUG:
         cv2.imwrite(IMAGE_NAME + '-morph.' + EXTENSION, morphed)
@@ -38,37 +31,25 @@ def parseLine(img):
         boundRect = cv2.boundingRect(contourPoly)
         boundRects.append(boundRect)
 
-    # We assume that the image is wrapped fairly tightly around the line
-    # We are only concerned with finding word boundaries, so extend the x-coordinate as
-    # far left as possible, and then extend the height to maximum
-    boundRects = sorted(boundRects, key=lambda x: x[0])
-    h = img.shape[0]
-    adjustedRects = []
-    currentLeftX = 0
-    rightPad = 2
-    for rect in boundRects:
-        x = currentLeftX
-        w = rect[2] + (rect[0] - currentLeftX) + rightPad
-        adjustedRect = (x, 0, w, h)
-        adjustedRects.append(adjustedRect)
-        currentLeftX = rect[0] + rect[2] + rightPad
-
     if DEBUG:
-        for rect in adjustedRects:
+        for rect in boundRects:
             cv2.rectangle(img, (rect[0], rect[1]), (rect[0] + rect[2], rect[1] + rect[3]), (0, 255, 0))
         cv2.imwrite(IMAGE_NAME + '-bounds.' + EXTENSION, img)
-        print '%d words found in %s' % (len(adjustedRects), IMAGE_FILE)
+        print '%d chars found in %s' % (len(boundRects), IMAGE_FILE)
 
-    # Extract words from paragraph
-    words = []
-    for rect in adjustedRects:
+    # Extract characters from word
+    chars = []
+    for rect in boundRects:
         [x, y, w, h] = rect
-        word = img[y:(y+h), x:(x+w)]
-        words.append(word)
+        char = img[y:(y+h), x:(x+w)]
+        chars.append(char)
 
-    for i in xrange(len(words)):
-        word = words[i]
+    for i in xrange(len(chars)):
+        char = chars[i]
         # TODO do something here
+        if DEBUG:
+            cv2.imshow('%d' % i, char)
+            cv2.waitKey(0)
 
     return boundRects
 
@@ -77,7 +58,7 @@ def test():
     global DEBUG
     DEBUG = True
     img = cv2.imread(IMAGE_FILE)
-    parseLine(img)
+    parseWord(img)
 
 if __name__ == "__main__":
     test()
