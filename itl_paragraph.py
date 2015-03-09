@@ -4,6 +4,8 @@ import cv2
 import numpy as np
 import sys
 
+import itl_line
+
 DEBUG = False
 IMAGE_FILE = 'images/paragraph2.png'
 [IMAGE_NAME, EXTENSION] = IMAGE_FILE.split('.')
@@ -11,7 +13,7 @@ IMAGE_FILE = 'images/paragraph2.png'
 STD_WIDTH = 700
 
 # Paragraph image img
-def parseParagraph(img):
+def parseParagraph(img, returnBounds=False):
     # Standardize paragraph to have a width of STD_WIDTH pixels
     w = img.shape[1]
     scaleFactor = float(STD_WIDTH) / w
@@ -60,6 +62,14 @@ def parseParagraph(img):
         [x, y, w, h] = rect
         line = img[y:(y+h), x:(x+w)]
         lines.append(line)
+
+    if returnBounds:
+        bounds = []
+        for i in xrange(len(lines)):
+            line = lines[i]
+            wordBounds = itl_line.parseLine(line, returnBounds=True)
+            bounds += wordBounds
+        return bounds
 
     for i in xrange(len(lines)):
         line = lines[i]

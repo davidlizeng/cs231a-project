@@ -4,6 +4,8 @@ import cv2
 import numpy as np
 import sys
 
+import itl_word
+
 DEBUG = False
 IMAGE_FILE = 'images/line2.png'
 [IMAGE_NAME, EXTENSION] = IMAGE_FILE.split('.')
@@ -11,7 +13,7 @@ IMAGE_FILE = 'images/line2.png'
 STD_HEIGHT = 20
 
 # Line image img
-def parseLine(img):
+def parseLine(img, returnBounds=False):
     # Standardize line to have a height of STD_HEIGHT pixels
     h = img.shape[0]
     scaleFactor = float(STD_HEIGHT) / h
@@ -65,6 +67,14 @@ def parseLine(img):
         [x, y, w, h] = rect
         word = img[y:(y+h), x:(x+w)]
         words.append(word)
+
+    if returnBounds:
+        bounds = []
+        for i in xrange(len(words)):
+            word = words[i]
+            charBounds = itl_word.parseWord(word, returnBounds=True)
+            bounds += charBounds
+        return bounds
 
     for i in xrange(len(words)):
         word = words[i]
