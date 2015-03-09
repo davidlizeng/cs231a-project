@@ -5,7 +5,7 @@ import numpy as np
 import sys
 
 DEBUG = False
-IMAGE_FILE = 'images/line1.png'
+IMAGE_FILE = 'images/line2.png'
 [IMAGE_NAME, EXTENSION] = IMAGE_FILE.split('.')
 
 STD_HEIGHT = 20

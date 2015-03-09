@@ -5,20 +5,27 @@ import numpy as np
 import sys
 
 DEBUG = False
-IMAGE_FILE = 'images/paragraph1.png'
+IMAGE_FILE = 'images/paragraph2.png'
 [IMAGE_NAME, EXTENSION] = IMAGE_FILE.split('.')
+
+STD_WIDTH = 700
 
 # Paragraph image img
 def parseParagraph(img):
+    # Standardize paragraph to have a width of STD_WIDTH pixels
+    w = img.shape[1]
+    scaleFactor = float(STD_WIDTH) / w
+    img = cv2.resize(img, (0,0), fx=scaleFactor, fy=scaleFactor)
+
     img_gray = cv2.cvtColor(img, cv.CV_BGR2GRAY)
     blur = cv2.GaussianBlur(img_gray, (5, 5), 0)
-    img_lap = cv2.Laplacian(img_gray, cv2.CV_8U)
+    img_lap = cv2.Laplacian(blur, cv2.CV_8U)
     unused, img_threshold = cv2.threshold(img_lap, 0, 255, cv.CV_THRESH_OTSU + cv.CV_THRESH_BINARY)
     if DEBUG:
         cv2.imwrite(IMAGE_NAME + '-thresh.' + EXTENSION, img_threshold)
 
     # Blur in the horizontal direction to get lines
-    element = cv2.getStructuringElement(cv2.MORPH_RECT, (25, 1))
+    element = cv2.getStructuringElement(cv2.MORPH_RECT, (25, 3))
     morphed = cv2.morphologyEx(img_threshold, cv.CV_MOP_CLOSE, element)
     if DEBUG:
         cv2.imwrite(IMAGE_NAME + '-morph.' + EXTENSION, morphed)
