@@ -39,6 +39,7 @@ def parseParagraph(img):
         maxHeight = max(rect[3], maxHeight)
     heightThresh = .25 * maxHeight
     boundRects = [rect for rect in boundRects if rect[3] > heightThresh]
+    boundRects = sorted(boundRects, key=lambda x: x[1])
 
     if DEBUG:
         for rect in boundRects:
@@ -53,11 +54,12 @@ def parseParagraph(img):
         line = img[y:(y+h), x:(x+w)]
         lines.append(line)
 
-    for line in lines:
+    for i in xrange(len(lines)):
+        line = lines[i]
         # TODO do something here
-        if DEBUG:
-            cv2.imshow('Line', line)
-            cv2.waitKey(0)
+        # if DEBUG:
+        #     cv2.imshow('%d' % i, line)
+        #     cv2.waitKey(0)
 
     return boundRects
 
