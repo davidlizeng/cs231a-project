@@ -11,19 +11,19 @@ IMAGE_FILE = 'images/word4.png'
 # Word image img
 def parseWord(img, returnBounds=False):
     # Standardize line to have a height of STD_HEIGHT pixels
-    h = img.shape[0]
-    scaleFactor = float(40) / h
-    img = cv2.resize(img, (0,0), fx=scaleFactor, fy=scaleFactor)
+    # h = img.shape[0]
+    # scaleFactor = float(40) / h
+    # img = cv2.resize(img, (0,0), fx=scaleFactor, fy=scaleFactor)
 
     img_gray = cv2.cvtColor(img, cv.CV_BGR2GRAY)
-    blur = cv2.GaussianBlur(img_gray, (5, 5), 0)
-    img_lap = cv2.Laplacian(blur, cv2.CV_8U)
-    unused, img_threshold = cv2.threshold(img_lap, 1, 255, cv.CV_THRESH_BINARY)
+    # blur = cv2.GaussianBlur(img_gray, (5, 5), 0)
+    img_lap = cv2.Laplacian(img_gray, cv2.CV_8U)
+    unused, img_threshold = cv2.threshold(img_lap, 0, 255, cv.CV_THRESH_BINARY)
     if DEBUG:
         cv2.imwrite(IMAGE_NAME + '-thresh.' + EXTENSION, img_threshold)
 
     # Blur in the horizontal direction to get lines
-    element = cv2.getStructuringElement(cv2.MORPH_RECT, (2, 3))
+    element = cv2.getStructuringElement(cv2.MORPH_RECT, (1, 3))
     morphed = cv2.morphologyEx(img_threshold, cv.CV_MOP_CLOSE, element)
     if DEBUG:
         cv2.imwrite(IMAGE_NAME + '-morph.' + EXTENSION, morphed)
