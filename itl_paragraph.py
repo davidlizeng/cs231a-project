@@ -50,15 +50,31 @@ def parseParagraph(img, returnBounds=False):
     boundRects = [rect for rect in boundRects if rect[3] > heightThresh]
     boundRects = sorted(boundRects, key=lambda x: x[1])
 
+    # We assume that the image is wrapped fairly tightly around the paragraph
+    # We are only concerned with finding line boundaries, so extend the y-coordinate as
+    # far up as possible, and pad the width as well
+    w = img.shape[0]
+    adjustedRects = []
+    currentTopY = 0
+    bottomPad = 1
+    rightPad = 4
+    topPad = 1
+    for rect in boundRects:
+        y = max(currentTopY - topPad, 0)
+        h = rect[3] + (rect[1] - currentTopY) + bottomPad
+        adjustedRect = (rect[0], y, max(rect[2] + rightPad, w), h)
+        adjustedRects.append(adjustedRect)
+        currentTopY = rect[1] + rect[3] + bottomPad
+
     if DEBUG:
-        # for rect in boundRects:
+        # for rect in adjustedRects:
         #     cv2.rectangle(img, (rect[0], rect[1]), (rect[0] + rect[2], rect[1] + rect[3]), (0, 255, 0))
         cv2.imwrite(IMAGE_NAME + '-bounds.' + EXTENSION, img)
-        print '%d lines found in %s' % (len(boundRects), IMAGE_FILE)
+        print '%d lines found in %s' % (len(adjustedRects), IMAGE_FILE)
 
     # Extract lines from paragraph
     lines = []
-    for rect in boundRects:
+    for rect in adjustedRects:
         [x, y, w, h] = rect
         line = img[y:(y+h), x:(x+w)]
         lines.append(line)
