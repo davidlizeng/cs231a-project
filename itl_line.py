@@ -56,8 +56,8 @@ def parseLine(img, returnBounds=False):
         currentLeftX = rect[0] + rect[2] + rightPad
 
     if DEBUG:
-        for rect in adjustedRects:
-            cv2.rectangle(img, (rect[0], rect[1]), (rect[0] + rect[2], rect[1] + rect[3]), (0, 255, 0))
+        # for rect in adjustedRects:
+        #     cv2.rectangle(img, (rect[0], rect[1]), (rect[0] + rect[2], rect[1] + rect[3]), (0, 255, 0))
         cv2.imwrite(IMAGE_NAME + '-bounds.' + EXTENSION, img)
         print '%d words found in %s' % (len(adjustedRects), IMAGE_FILE)
 
@@ -76,11 +76,13 @@ def parseLine(img, returnBounds=False):
             bounds += charBounds
         return bounds
 
+    latex = []
     for i in xrange(len(words)):
         word = words[i]
-        # TODO do something here
+        wordLatex = itl_word.parseWord(word)
+        latex.append(wordLatex)
 
-    return boundRects
+    return latex
 
 
 def test():

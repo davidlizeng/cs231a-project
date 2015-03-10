@@ -51,8 +51,8 @@ def parseParagraph(img, returnBounds=False):
     boundRects = sorted(boundRects, key=lambda x: x[1])
 
     if DEBUG:
-        for rect in boundRects:
-            cv2.rectangle(img, (rect[0], rect[1]), (rect[0] + rect[2], rect[1] + rect[3]), (0, 255, 0))
+        # for rect in boundRects:
+        #     cv2.rectangle(img, (rect[0], rect[1]), (rect[0] + rect[2], rect[1] + rect[3]), (0, 255, 0))
         cv2.imwrite(IMAGE_NAME + '-bounds.' + EXTENSION, img)
         print '%d lines found in %s' % (len(boundRects), IMAGE_FILE)
 
@@ -71,14 +71,22 @@ def parseParagraph(img, returnBounds=False):
             bounds += wordBounds
         return bounds
 
+    latex = []
     for i in xrange(len(lines)):
         line = lines[i]
+        lineLatex = itl_line.parseLine(line)
+        latex.append(lineLatex)
         # TODO do something here
         # if DEBUG:
         #     cv2.imshow('%d' % i, line)
         #     cv2.waitKey(0)
 
-    return boundRects
+    # Returns list of lines
+    # Each line is a list of words
+    # Each word is a list of chars
+    # Each char is a tuple ('latexString', itl_char.CODE)
+    print latex
+    return latex
 
 
 def test():

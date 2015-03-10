@@ -30,10 +30,16 @@ def trainImage(index):
     if len(charBounds) != len(nums):
         print 'ERROR: Image #%d, len(mapFile) = %d, len(detectedChars) = %d' %\
             (index, len(nums), len(charBounds))
+    # Standardize character height/width
+    # Although, if they come from itl_word and itl_line, height will be 20px
+    # So, just shrink width alone
+    # Follow StackOverflow post for pixel features
 
 def trainImages(dictionary):
     for i in xrange(1, NUM_IMAGES + 1):
         trainImage(i)
+    # Save results of all training into samples and responses data file
+    # itl_char will be loading this
 
 def main():
     trainImages(itl_char.dictionary)
