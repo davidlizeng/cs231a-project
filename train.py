@@ -14,7 +14,7 @@ DICTIONARY_FILE = PATH + 'dictionary.txt'
 # Name training images as 'train#.png', where # is the image number.
 # Corresponding mapping file is 'map#.txt'. Map file should just be one line.
 # Follow examples to add more training images.
-NUM_IMAGES = 225
+NUM_IMAGES = 6
 
 CHAR_BOX = (20, 20)
 
