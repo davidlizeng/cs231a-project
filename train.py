@@ -26,18 +26,22 @@ def readMapFile(filename):
         data += map(int, d)
     return data
 
-def trainImage(index):
-    imageFile = PATH + ('train%d.png' % index)
-    mapFile = PATH + ('map%d.txt' % index)
+def trainImage(imageNumber):
+    imageFile = PATH + ('train%d.png' % imageNumber)
+    mapFile = PATH + ('map%d.txt' % imageNumber)
     nums = readMapFile(mapFile)
     img = cv2.imread(imageFile)
     charBounds = itl_paragraph.parseParagraph(img, returnBounds=True)
     if len(charBounds) != len(nums):
         print 'ERROR: Image #%d, len(mapFile) = %d, len(detectedChars) = %d' %\
-            (index, len(nums), len(charBounds))
+            (imageNumber, len(nums), len(charBounds))
 
     samples = np.empty((0, 400))
     for charBound in charBounds:
+        # Use this to check that the character bounding boxes are accurate
+        # if imageNumber == 5:
+        #     cv2.imshow('IMG', charBound)
+        #     cv2.waitKey(0)
         charBound = cv2.resize(charBound, CHAR_BOX)
         charBound = cv2.cvtColor(charBound,cv2.COLOR_BGR2GRAY)
         charBound = np.float32(charBound.reshape((1, 400)))
@@ -51,11 +55,11 @@ def trainImage(index):
 def trainImages(dictionary):
     nums = np.empty((0, 1))
     samples = np.empty((0, 400))
-    for i in xrange(1, NUM_IMAGES + 1):
-        (n, s) = trainImage(i)
+    for imageNumber in xrange(1, NUM_IMAGES + 1):
+        (n, s) = trainImage(imageNumber)
         nums = np.append(nums, n, 0)
         samples = np.append(samples, s, 0)
-        print 'Loaded train%d.png' % i
+        print 'Loaded train%d.png' % imageNumber
     np.savetxt('training/samples_px.data',samples)
     np.savetxt('training/responses_px.data',nums)
 
