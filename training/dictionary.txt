@@ -130,6 +130,7 @@
 1075 \phi
 1076 \psi
 1077 \sigma
+1078 \sum
 # Ambiguous
 2000 (
 2001 )
