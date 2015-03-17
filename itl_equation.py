@@ -6,7 +6,7 @@ import math
 from collections import deque
 
 DEBUG = False
-IMAGE_FILE = 'images/equation4.png'
+IMAGE_FILE = 'images/equation5.png'
 [IMAGE_NAME, EXTENSION] = IMAGE_FILE.split('.')
 
 symbol_dict = {
@@ -387,25 +387,27 @@ def handleSpecialCases(L):
 # equation image
 def parseEquation(img):
     img_gray = cv2.cvtColor(img, cv.CV_BGR2GRAY)
+    #img_inv = 255 - img_gray
     print img_gray.shape
-    img_lap = cv2.Laplacian(img_gray, cv2.CV_8U)
-    if DEBUG:
-        cv2.imwrite(IMAGE_NAME + '-lap.' + EXTENSION, img_lap)
-    unused, img_threshold = cv2.threshold(img_lap, 0, 255, cv.CV_THRESH_BINARY)
+    # img_lap = cv2.Laplacian(img_gray, cv2.CV_8U)
+    # if DEBUG:
+    #     cv2.imwrite(IMAGE_NAME + '-lap.' + EXTENSION, img_lap)
+    unused, img_threshold = cv2.threshold(img_gray, 200, 255, cv.CV_THRESH_BINARY_INV)
     if DEBUG:
         cv2.imwrite(IMAGE_NAME + '-thresh.' + EXTENSION, img_threshold)
     # Blur in the horizontal direction to get lines
-    element = cv2.getStructuringElement(cv2.MORPH_RECT, (1, 6))
+    morph_size = (1, 2)
+    element = cv2.getStructuringElement(cv2.MORPH_RECT, morph_size)
     morphed = cv2.morphologyEx(img_threshold, cv.CV_MOP_CLOSE, element)
     if DEBUG:
         cv2.imwrite(IMAGE_NAME + '-morph.' + EXTENSION, morphed)
     # Use RETR_EXTERNAL to remove boxes that are completely contained by the word
-    contours, hierarchy = cv2.findContours(morphed, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+    contours, hierarchy = cv2.findContours(morphed, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_NONE)
     boundRects = []
     for i in xrange(len(contours)):
-        contourPoly = cv2.approxPolyDP(contours[i], 3, True)
+        contourPoly = cv2.approxPolyDP(contours[i], 0.25, True)
         boundRect = cv2.boundingRect(contourPoly)
-        boundRects.append(boundRect)
+        boundRects.append((boundRect[0]-morph_size[0], boundRect[1]-morph_size[1], boundRect[2]+ morph_size[0], boundRect[3]))
 
     # # Filter bounding rectangles that are not an entire line
     # # Take the maximum height among all bounding boxes
@@ -434,40 +436,40 @@ def parseEquation(img):
     #     if DEBUG:
     #         cv2.imshow('Word', word)
     #         cv2.waitKey(0)
-    johns = ['n', '-', '-', '\\sum', '\\infty', '-', '\\infty', '|', '\\langle',
-        'f', ',', '-', '\\sqrt', 'e', 'i', '2', 'n', '\\pi', 'x', '\\rangle',
-        '|', '2', '-', '-', '|', '|', 'f', '|', '|', '2'
-    ]
-    L = []
-    for j in xrange(len(johns)):
-        L.append(buildSymbol(johns[j], *(sortedRects[j])))
-    L = handleSpecialCases(L)
-    death = [l.key for l in L]
-    print death
-    tree, baseline = findSymbolTree(L)
+    # johns = ['n', '-', '-', '\\sum', '\\infty', '-', '\\infty', '|', '\\langle',
+    #     'f', ',', '-', '\\sqrt', 'e', 'i', '2', 'n', '\\pi', 'x', '\\rangle',
+    #     '|', '2', '-', '-', '|', '|', 'f', '|', '|', '2'
+    # ]
+    # L = []
+    # for j in xrange(len(johns)):
+    #     L.append(buildSymbol(johns[j], *(sortedRects[j])))
+    # L = handleSpecialCases(L)
+    # death = [l.key for l in L]
+    # print death
+    # tree, baseline = findSymbolTree(L)
 
-    for i in xrange(len(L)):
-        c = L[i].centroid()
-        rounded = (int(round(c[0])), int(round(c[1])))
-        if i in baseline:
-            cv2.circle(img, rounded, 3, (255, 0, 0), 2)
-        else:
-            cv2.circle(img, rounded, 3, (0, 0, 255), 2)
-    for i in xrange(len(L)):
-        for j in tree[i]:
-            c1 = L[i].centroid()
-            c2 = L[j].centroid()
-            r1 = (int(round(c1[0])), int(round(c1[1])))
-            r2 = (int(round(c2[0])), int(round(c2[1])))
-            if i in baseline and j in baseline:
-                cv2.line(img, r1, r2, (255, 0, 0))
-            else:
-                cv2.line(img, r1, r2, (0, 0, 255))
-    cv2.circle(img, (0,0) , 3, (255, 0, 0), 2)
-    cv2.imwrite(IMAGE_NAME + '-mst.' + EXTENSION, img)
+    # for i in xrange(len(L)):
+    #     c = L[i].centroid()
+    #     rounded = (int(round(c[0])), int(round(c[1])))
+    #     if i in baseline:
+    #         cv2.circle(img, rounded, 3, (255, 0, 0), 2)
+    #     else:
+    #         cv2.circle(img, rounded, 3, (0, 0, 255), 2)
+    # for i in xrange(len(L)):
+    #     for j in tree[i]:
+    #         c1 = L[i].centroid()
+    #         c2 = L[j].centroid()
+    #         r1 = (int(round(c1[0])), int(round(c1[1])))
+    #         r2 = (int(round(c2[0])), int(round(c2[1])))
+    #         if i in baseline and j in baseline:
+    #             cv2.line(img, r1, r2, (255, 0, 0))
+    #         else:
+    #             cv2.line(img, r1, r2, (0, 0, 255))
+    # cv2.circle(img, (0,0) , 3, (255, 0, 0), 2)
+    # cv2.imwrite(IMAGE_NAME + '-mst.' + EXTENSION, img)
 
-    node = buildLaTeXTree(L)
-    print node.str()
+    # node = buildLaTeXTree(L)
+    # print node.str()
 
     return boundRects
 
