@@ -14,7 +14,7 @@ DICTIONARY_FILE = PATH + 'dictionary.txt'
 # Name training images as 'train#.png', where # is the image number.
 # Corresponding mapping file is 'map#.txt'. Map file should just be one line.
 # Follow examples to add more training images.
-NUM_IMAGES = 255
+NUM_IMAGES = 225
 
 CHAR_BOX = (20, 20)
 
@@ -35,11 +35,12 @@ def trainImage(imageNumber):
     if len(charBounds) != len(nums):
         print 'ERROR: Image #%d, len(mapFile) = %d, len(detectedChars) = %d' %\
             (imageNumber, len(nums), len(charBounds))
+        exit()
 
     samples = np.empty((0, 400))
     for charBound in charBounds:
         # Use this to check that the character bounding boxes are accurate
-        # if imageNumber == 5:
+        # if imageNumber == 6:
         #     cv2.imshow('IMG', charBound)
         #     cv2.waitKey(0)
         charBound = cv2.resize(charBound, CHAR_BOX)
