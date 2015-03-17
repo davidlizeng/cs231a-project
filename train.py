@@ -42,17 +42,25 @@ def trainImage(imageNumber):
             (imageNumber, len(nums), len(charBounds))
         exit()
 
-    samples = np.empty((0, 400))
+    # samples = np.empty((0, 400))
+    samples = np.empty((0, 10))
+
     for charBound in charBounds:
         # Use this to check that the character bounding boxes are accurate
         # if imageNumber > 0:
         #     cv2.imshow('IMG', charBound)
         #     cv2.waitKey(0)
         # itl_char.parseCharacter(charBound)
-        charBound = cv2.resize(charBound, CHAR_BOX)
-        charBound = cv2.cvtColor(charBound,cv2.COLOR_BGR2GRAY)
-        charBound = np.float32(charBound.reshape((1, 400)))
-        charBound = charBound / np.linalg.norm(charBound)
+
+        # Pixel Values as features
+        # charBound = cv2.resize(charBound, CHAR_BOX)
+        # charBound = cv2.cvtColor(charBound,cv2.COLOR_BGR2GRAY)
+        # charBound = np.float32(charBound.reshape((1, 400)))
+        # charBound = charBound / np.linalg.norm(charBound)
+
+        # Frey-Slate attributes
+        charBound = itl_char.getFreySlateAttributes(charBound)
+
         samples = np.append(samples, charBound, 0)
     nums = np.array(nums, np.int)
     nums = nums.reshape((nums.size, 1))
@@ -61,14 +69,23 @@ def trainImage(imageNumber):
 
 def trainImages(dictionary):
     nums = np.empty((0, 1))
-    samples = np.empty((0, 400))
+
+    # samples = np.empty((0, 400))
+    samples = np.empty((0, 10))
+
     for imageNumber in xrange(1, NUM_IMAGES + 1):
         (n, s) = trainImage(imageNumber)
         nums = np.append(nums, n, 0)
         samples = np.append(samples, s, 0)
         print 'Loaded train%d.png' % imageNumber
-    np.savetxt('training/samples_px.data',samples)
-    np.savetxt('training/responses_px.data',nums)
+
+    # Pixel values as features
+    # np.savetxt('training/samples_px.data',samples)
+    # np.savetxt('training/responses_px.data',nums)
+
+    # Frey-Slate attributes
+    np.savetxt('training/samples_fs.data',samples)
+    np.savetxt('training/responses_fs.data',nums)
 
 def main():
     trainImages(itl_char.dictionary)
