@@ -34,8 +34,9 @@ for i in xrange(26):
   output(ch)
 
 # Digits
-for i in xrange(1, 11):
+for i in xrange(1, 10):
   output(str(i))
+output(str(0))
 
 symbols = [
   '\\alpha',

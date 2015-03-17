@@ -7,7 +7,7 @@ import sys
 import itl_line
 
 DEBUG = False
-IMAGE_FILE = 'images/paragraph2.png'
+IMAGE_FILE = 'images/paragraph1.png'
 [IMAGE_NAME, EXTENSION] = IMAGE_FILE.split('.')
 
 STD_WIDTH = 700
@@ -27,7 +27,7 @@ def parseParagraph(img, returnBounds=False):
         cv2.imwrite(IMAGE_NAME + '-thresh.' + EXTENSION, img_threshold)
 
     # Blur in the horizontal direction to get lines
-    element = cv2.getStructuringElement(cv2.MORPH_RECT, (25, 3))
+    element = cv2.getStructuringElement(cv2.MORPH_RECT, (200, 3) if returnBounds else (25, 3))
     morphed = cv2.morphologyEx(img_threshold, cv.CV_MOP_CLOSE, element)
     if DEBUG:
         cv2.imwrite(IMAGE_NAME + '-morph.' + EXTENSION, morphed)
@@ -55,20 +55,17 @@ def parseParagraph(img, returnBounds=False):
     # far up as possible, and pad the width as well
     w = img.shape[0]
     adjustedRects = []
-    currentTopY = 0
-    bottomPad = 1
+    bottomPad = 2
     rightPad = 4
-    topPad = 1
+    topPad = 2
     for rect in boundRects:
-        y = max(currentTopY - topPad, 0)
-        h = rect[3] + (rect[1] - currentTopY) + bottomPad
-        adjustedRect = (rect[0], y, max(rect[2] + rightPad, w), h)
+        h = rect[3] + topPad + bottomPad
+        adjustedRect = (rect[0], rect[1] - topPad, max(rect[2] + rightPad, w), h)
         adjustedRects.append(adjustedRect)
-        currentTopY = rect[1] + rect[3] + bottomPad
 
     if DEBUG:
-        # for rect in adjustedRects:
-        #     cv2.rectangle(img, (rect[0], rect[1]), (rect[0] + rect[2], rect[1] + rect[3]), (0, 255, 0))
+        for rect in adjustedRects:
+            cv2.rectangle(img, (rect[0], rect[1]), (rect[0] + rect[2], rect[1] + rect[3]), (0, 255, 0))
         cv2.imwrite(IMAGE_NAME + '-bounds.' + EXTENSION, img)
         print '%d lines found in %s' % (len(adjustedRects), IMAGE_FILE)
 

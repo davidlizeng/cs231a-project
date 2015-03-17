@@ -26,7 +26,7 @@ def parseLine(img, returnBounds=False):
     if DEBUG:
         cv2.imwrite(IMAGE_NAME + '-thresh.' + EXTENSION, img_threshold)
 
-    # Blur in the horizontal direction to get lines
+    # Blur in the horizontal direction to get words
     element = cv2.getStructuringElement(cv2.MORPH_RECT, (5, 10))
     morphed = cv2.morphologyEx(img_threshold, cv.CV_MOP_CLOSE, element)
     if DEBUG:

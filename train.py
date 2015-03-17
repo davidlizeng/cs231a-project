@@ -1,6 +1,8 @@
 # Train character data
 
+import cv
 import cv2
+import numpy as np
 
 import itl_char
 import itl_paragraph
@@ -12,13 +14,16 @@ DICTIONARY_FILE = PATH + 'dictionary.txt'
 # Name training images as 'train#.png', where # is the image number.
 # Corresponding mapping file is 'map#.txt'. Map file should just be one line.
 # Follow examples to add more training images.
-NUM_IMAGES = 1
+NUM_IMAGES = 5
+
+CHAR_BOX = (20, 20)
 
 def readMapFile(filename):
     infile = open(filename, 'r')
-    line = infile.readline()
-    data = line.split()
-    data = map(int, data)
+    data = []
+    for line in infile:
+        d = line.split()
+        data += map(int, d)
     return data
 
 def trainImage(index):
@@ -30,16 +35,29 @@ def trainImage(index):
     if len(charBounds) != len(nums):
         print 'ERROR: Image #%d, len(mapFile) = %d, len(detectedChars) = %d' %\
             (index, len(nums), len(charBounds))
-    # Standardize character height/width
-    # Although, if they come from itl_word and itl_line, height will be 20px
-    # So, just shrink width alone
-    # Follow StackOverflow post for pixel features
+
+    samples = np.empty((0, 400))
+    for charBound in charBounds:
+        charBound = cv2.resize(charBound, CHAR_BOX)
+        charBound = cv2.cvtColor(charBound,cv2.COLOR_BGR2GRAY)
+        charBound = np.float32(charBound.reshape((1, 400)))
+        charBound = charBound / np.linalg.norm(charBound)
+        samples = np.append(samples, charBound, 0)
+    nums = np.array(nums, np.int)
+    nums = nums.reshape((nums.size, 1))
+    return (nums, samples)
+
 
 def trainImages(dictionary):
+    nums = np.empty((0, 1))
+    samples = np.empty((0, 400))
     for i in xrange(1, NUM_IMAGES + 1):
-        trainImage(i)
-    # Save results of all training into samples and responses data file
-    # itl_char will be loading this
+        (n, s) = trainImage(i)
+        nums = np.append(nums, n, 0)
+        samples = np.append(samples, s, 0)
+        print 'Loaded train%d.png' % i
+    np.savetxt('training/samples_px.data',samples)
+    np.savetxt('training/responses_px.data',nums)
 
 def main():
     trainImages(itl_char.dictionary)

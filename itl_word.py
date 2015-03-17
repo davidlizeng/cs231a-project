@@ -6,24 +6,34 @@ import sys
 
 import itl_char
 
+IMAGE_FILES = ['images/word1.png', 'images/word2.png', 'images/word3.png', 'images/word4.png']
+
 DEBUG = False
-IMAGE_FILE = 'images/word4.png'
-[IMAGE_NAME, EXTENSION] = IMAGE_FILE.split('.')
+IMAGE_FILE = ''
+[IMAGE_NAME, EXTENSION] = ['', '']
 
 # Word image img
 def parseWord(img, returnBounds=False):
     img1 = cv2.cvtColor(img, cv.CV_BGR2GRAY)
-    # img1 = cv2.GaussianBlur(img1, (5, 5), 0)
-    # img1 = cv2.Laplacian(img1, cv2.CV_8U)
-    # img1 = cv2.equalizeHist(img1)
-    unused, img1 = cv2.threshold(img1, 200, 255, cv.CV_THRESH_BINARY_INV)
-    img1 = cv2.dilate(img1, (2, 2), 1)
-    if DEBUG:
-        cv2.imwrite(IMAGE_NAME + '-thresh.' + EXTENSION, img1)
 
-    # Blur in the horizontal direction to get lines
-    element = cv2.getStructuringElement(cv2.MORPH_RECT, (1, 3))
-    img1 = cv2.morphologyEx(img1, cv.CV_MOP_CLOSE, element)
+    if returnBounds:
+        # TRAINING parameters, with nicely spaced characters
+        unused, img1 = cv2.threshold(img1, 200, 255, cv.CV_THRESH_BINARY_INV)
+        img1 = cv2.dilate(img1, (2, 2), 1)
+        element = cv2.getStructuringElement(cv2.MORPH_RECT, (5, 5))
+        img1 = cv2.morphologyEx(img1, cv.CV_MOP_CLOSE, element)
+    else:
+        img1 = cv2.GaussianBlur(img1, (1, 1), 0)
+        # img1 = cv2.Laplacian(img1, cv2.CV_8U)
+        # img1 = cv2.equalizeHist(img1)
+        unused, img1 = cv2.threshold(img1, 200, 255, cv.CV_THRESH_BINARY_INV)
+        # img1 = cv2.dilate(img1, (1, 1), 1)
+        if DEBUG:
+            cv2.imwrite(IMAGE_NAME + '-thresh.' + EXTENSION, img1)
+        # Blur in the horizontal direction to get lines
+        element = cv2.getStructuringElement(cv2.MORPH_RECT, (1, 1))
+        img1 = cv2.morphologyEx(img1, cv.CV_MOP_CLOSE, element)
+
     if DEBUG:
         cv2.imwrite(IMAGE_NAME + '-morph.' + EXTENSION, img1)
 
@@ -49,17 +59,12 @@ def parseWord(img, returnBounds=False):
         cv2.imwrite(IMAGE_NAME + '-bounds.' + EXTENSION, img)
         print '%d chars found in %s' % (len(adjustedRects), IMAGE_FILE)
 
-    # print '%d chars found' % len(adjustedRects)
-    # for rect in adjustedRects:
-    #     cv2.rectangle(img, (rect[0], rect[1]), (rect[0] + rect[2], rect[1] + rect[3]), (0, 255, 0))
-    # cv2.imshow('Agg', img)
-    # cv2.waitKey(0)
-
     # Extract characters from word
+    height = img.shape[0]
     chars = []
     for rect in adjustedRects:
         [x, y, w, h] = rect
-        char = img[y:(y+h), x:(x+w)]
+        char = img[0:height, x:(x+w)]
         chars.append(char)
 
     if returnBounds:
@@ -78,9 +83,10 @@ def parseWord(img, returnBounds=False):
 
 
 def test():
-    global DEBUG
+    global DEBUG, IMAGE_FILE, IMAGE_NAME, EXTENSION
     DEBUG = True
-    for IMAGE_FILE in ['images/word1.png', 'images/word2.png', 'images/word3.png', 'images/word4.png']:
+    for IMAGE_FILE in IMAGE_FILES:
+        [IMAGE_NAME, EXTENSION] = IMAGE_FILE.split('.')
         img = cv2.imread(IMAGE_FILE)
         parseWord(img)
 
