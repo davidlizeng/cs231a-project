@@ -41,7 +41,7 @@ def parseWord(img, returnBounds=False):
     contours, hierarchy = cv2.findContours(img1, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
     boundRects = []
     for i in xrange(len(contours)):
-        contourPoly = cv2.approxPolyDP(contours[i], 3, True)
+        contourPoly = cv2.approxPolyDP(contours[i], .25, True)
         boundRect = cv2.boundingRect(contourPoly)
         boundRects.append(boundRect)
 

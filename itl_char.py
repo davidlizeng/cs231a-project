@@ -42,7 +42,7 @@ if len(dictionary) == 0:
     samples = np.loadtxt(SAMPLES_FILE, np.float32)
     responses = np.loadtxt(RESPONSES_FILE, np.float32)
     responses = responses.reshape((responses.size, 1))
-    # KNearest, SVM
+    # KNearest
     # model.train(samples, responses)
     # LogReg
     model.fit(samples, responses.ravel())
@@ -56,7 +56,7 @@ def parseCharacter(img):
 
     # KNearest
     # val, results, n_response, distances = model.find_nearest(img, k = 1)
-    # print dictionary[int(val)]
+    # print dictionary[int(val)], distances[0]
     # Log Reg
     val = model.predict(img)
     [index] = np.where(model.classes_ == val)
