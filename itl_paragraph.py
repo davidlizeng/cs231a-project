@@ -69,6 +69,11 @@ def parseParagraph(img, returnBounds=False):
         cv2.imwrite(IMAGE_NAME + '-bounds.' + EXTENSION, img)
         print '%d lines found in %s' % (len(adjustedRects), IMAGE_FILE)
 
+    # for rect in adjustedRects:
+    #     cv2.rectangle(img, (rect[0], rect[1]), (rect[0] + rect[2], rect[1] + rect[3]), (0, 255, 0))
+    # cv2.imshow('IMG', img)
+    # cv2.waitKey(0)
+
     # Extract lines from paragraph
     lines = []
     for rect in adjustedRects:

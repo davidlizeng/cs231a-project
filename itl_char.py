@@ -49,6 +49,8 @@ if len(dictionary) == 0:
 
 
 def parseCharacter(img, getScore=False):
+    # cv2.imshow('IMG', img)
+    # cv2.waitKey(0)
     img = cv2.resize(img, CHAR_BOX)
     img = cv2.cvtColor(img,cv2.COLOR_BGR2GRAY)
     img = np.float32(img.reshape((1, 400)))

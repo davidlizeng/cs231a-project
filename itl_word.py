@@ -19,9 +19,12 @@ def parseWord(img, returnBounds=False):
     if returnBounds:
         # TRAINING parameters, with nicely spaced characters
         unused, img1 = cv2.threshold(img1, 200, 255, cv.CV_THRESH_BINARY_INV)
+        img1 = cv2.GaussianBlur(img1, (5, 5), 0)
         img1 = cv2.dilate(img1, (2, 2), 1)
         element = cv2.getStructuringElement(cv2.MORPH_RECT, (5, 5))
         img1 = cv2.morphologyEx(img1, cv.CV_MOP_CLOSE, element)
+        # cv2.imshow('MORPH', img1)
+        # cv2.waitKey(0)
     else:
         img1 = cv2.GaussianBlur(img1, (1, 1), 0)
         # img1 = cv2.Laplacian(img1, cv2.CV_8U)
@@ -64,6 +67,11 @@ def parseWord(img, returnBounds=False):
         #     cv2.rectangle(img, (rect[0], rect[1]), (rect[0] + rect[2], rect[1] + rect[3]), (0, 255, 0))
         cv2.imwrite(IMAGE_NAME + '-bounds.' + EXTENSION, img)
         print '%d char bounding boxes initially found in %s' % (len(adjustedRects), IMAGE_FILE)
+
+    # for rect in adjustedRects:
+    #     cv2.rectangle(img, (rect[0], rect[1]), (rect[0] + rect[2], rect[1] + rect[3]), (0, 255, 0))
+    # cv2.imshow('IMG', img)
+    # cv2.waitKey(0)
 
     # Extract characters from word
     chars = []

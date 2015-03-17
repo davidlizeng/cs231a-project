@@ -32,6 +32,11 @@ def trainImage(imageNumber):
     nums = readMapFile(mapFile)
     img = cv2.imread(imageFile)
     charBounds = itl_paragraph.parseParagraph(img, returnBounds=True)
+    # Use this to check character bounding boxes
+    # for charBound in charBounds:
+    #     if imageNumber == 6:
+    #         cv2.imshow('IMG', charBound)
+    #         cv2.waitKey(0)
     if len(charBounds) != len(nums):
         print 'ERROR: Image #%d, len(mapFile) = %d, len(detectedChars) = %d' %\
             (imageNumber, len(nums), len(charBounds))
@@ -40,9 +45,10 @@ def trainImage(imageNumber):
     samples = np.empty((0, 400))
     for charBound in charBounds:
         # Use this to check that the character bounding boxes are accurate
-        # if imageNumber == 6:
+        # if imageNumber > 0:
         #     cv2.imshow('IMG', charBound)
         #     cv2.waitKey(0)
+        # itl_char.parseCharacter(charBound)
         charBound = cv2.resize(charBound, CHAR_BOX)
         charBound = cv2.cvtColor(charBound,cv2.COLOR_BGR2GRAY)
         charBound = np.float32(charBound.reshape((1, 400)))
