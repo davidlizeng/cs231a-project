@@ -46,26 +46,50 @@ def parseWord(img, returnBounds=False):
         boundRects.append(boundRect)
 
     # Pad the character bounding boxes
+    height = img.shape[0]
+    width = img.shape[1]
     boundRects = sorted(boundRects, key=lambda x: x[0])
     pad = 1
     adjustedRects = []
+    minX = width
+    maxX = 0
     for rect in boundRects:
         adjustedRect = (rect[0] - pad, rect[1] - pad, rect[2] + pad * 2, rect[3] + pad * 2)
         adjustedRects.append(adjustedRect)
+        minX = min(minX, adjustedRect[0])
+        maxX = max(maxX, adjustedRect[0] + adjustedRect[2])
 
     if DEBUG:
         # for rect in adjustedRects:
         #     cv2.rectangle(img, (rect[0], rect[1]), (rect[0] + rect[2], rect[1] + rect[3]), (0, 255, 0))
         cv2.imwrite(IMAGE_NAME + '-bounds.' + EXTENSION, img)
-        print '%d chars found in %s' % (len(adjustedRects), IMAGE_FILE)
+        print '%d char bounding boxes initially found in %s' % (len(adjustedRects), IMAGE_FILE)
 
     # Extract characters from word
-    height = img.shape[0]
     chars = []
     for rect in adjustedRects:
         [x, y, w, h] = rect
         char = img[0:height, x:(x+w)]
         chars.append(char)
+    # currentX = minX
+    # MIN_CHAR_WIDTH = 3
+    # MAX_CHAR_WIDTH = 20
+    # CHAR_BOX_STEP = 1
+    # while width - currentX >= MIN_CHAR_WIDTH:
+    #     bestScore = 0 # Start this at threshold!
+    #     bestVal = None
+    #     bestWidth = 0
+    #     for width in xrange(MIN_CHAR_WIDTH, MAX_CHAR_WIDTH + 1, CHAR_BOX_STEP):
+    #         rightX = currentX + width
+    #         charSlice = img[0:height, currentX:rightX]
+    #         val, score = itl_char.parseCharacter(charSlice, getScore=True)
+    #         if score > bestScore:
+    #             bestScore = score
+    #             bestWidth = width
+    #             bestVal = val
+    #     print bestWidth, bestScore, bestVal
+    #     # Add to chars array
+    #     currentX += bestWidth
 
     if returnBounds:
         return chars

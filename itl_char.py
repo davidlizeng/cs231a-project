@@ -48,7 +48,7 @@ if len(dictionary) == 0:
     model.fit(samples, responses.ravel())
 
 
-def parseCharacter(img):
+def parseCharacter(img, getScore=False):
     img = cv2.resize(img, CHAR_BOX)
     img = cv2.cvtColor(img,cv2.COLOR_BGR2GRAY)
     img = np.float32(img.reshape((1, 400)))
@@ -56,13 +56,18 @@ def parseCharacter(img):
 
     # KNearest
     # val, results, n_response, distances = model.find_nearest(img, k = 1)
-    # print dictionary[int(val)], distances[0]
+    # score = distances[0][0]
     # Log Reg
     val = model.predict(img)
     [index] = np.where(model.classes_ == val)
-    print dictionary[int(val)], model.predict_proba(img)[0][index]
+    score = model.predict_proba(img)[0][index][0]
 
-    return dictionary[int(val)]
+    print dictionary[int(val)], score
+
+    if not getScore:
+        return dictionary[int(val)]
+    else:
+        return dictionary[int(val)], score
 
 def main():
     pass
