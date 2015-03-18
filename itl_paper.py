@@ -12,18 +12,18 @@ EQUATION = 2
 
 def initializeLatexPaper():
     latexPaper = ""
-    latexPaper += "\\documentclass[11pt]{article} \\n"
-    latexPaper += "\\begin{document} \\n"
+    latexPaper += "\\documentclass[11pt]{article} \n"
+    latexPaper += "\\begin{document} \n"
     return latexPaper
 
 def addLatex(latexPaper, latex, paragraphType):
     if paragraphType == EQUATION:
-        latexPaper += "\\begin{align*} \\n"
+        latexPaper += "\\begin{align*} \n"
     latexPaper += latex
     if paragraphType == TEXT:
-        latexPaper += "\\\\ \\\\ \\n"
+        latexPaper += "\\\\ \\\\ \n"
     elif paragraphType == EQUATION:
-        latexPaper += "\\end{align*} \\n"
+        latexPaper += "\\end{align*} \n"
     return latexPaper
 
 def constructLatex(paragraphs, paragraphBoxes, paragraphTypes):
