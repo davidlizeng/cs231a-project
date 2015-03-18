@@ -51,11 +51,14 @@ def parsePaper(img):
     return maxWidth
 
 def genRotateImage(img, r, center):
-    rotMat = cv2.getRotationMatrix2D(center, r, 1)
-    rotMat[0][2] += img.shape[1]/2
-    rotMat[1][2] += img.shape[0]/2
     img_invert = (255 - img)
-    img_r = cv2.warpAffine(img_invert, rotMat, (2*img.shape[1], 2*img.shape[0]))
+    transMat = cv2.getRotationMatrix2D(center, 0, 1)
+    transMat[0][2] += max(img.shape[1], img.shape[0])/2 - img.shape[1]/2
+    transMat[1][2] += max(img.shape[1], img.shape[0])/2 - img.shape[0]/2
+    img_invert = cv2.warpAffine(img_invert, transMat, (max(img.shape[1], img.shape[0]),max(img.shape[1], img.shape[0])))
+    center = (max(img.shape[1], img.shape[0])/2, max(img.shape[1], img.shape[0])/2)
+    rotMat = cv2.getRotationMatrix2D(center, r, 1)    
+    img_r = cv2.warpAffine(img_invert, rotMat, (max(img.shape[1], img.shape[0]),max(img.shape[1], img.shape[0])))
     img_r = (255 - img_r)
     return img_r
 
