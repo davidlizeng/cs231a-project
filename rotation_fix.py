@@ -3,7 +3,7 @@ import cv2
 import numpy as np
 import sys
 import itl_paragraph
-import matplotlib.pyplot as plt
+# import matplotlib.pyplot as plt
 
 IMAGE_FILE = 'images/rotate1.png'
 [IMAGE_NAME, EXTENSION] = IMAGE_FILE.split('.')
@@ -57,7 +57,7 @@ def genRotateImage(img, r, center):
     transMat[1][2] += max(img.shape[1], img.shape[0])/2 - img.shape[0]/2
     img_invert = cv2.warpAffine(img_invert, transMat, (max(img.shape[1], img.shape[0]),max(img.shape[1], img.shape[0])))
     center = (max(img.shape[1], img.shape[0])/2, max(img.shape[1], img.shape[0])/2)
-    rotMat = cv2.getRotationMatrix2D(center, r, 1)    
+    rotMat = cv2.getRotationMatrix2D(center, r, 1)
     img_r = cv2.warpAffine(img_invert, rotMat, (max(img.shape[1], img.shape[0]),max(img.shape[1], img.shape[0])))
     img_r = (255 - img_r)
     return img_r
@@ -96,9 +96,9 @@ def findBestRotation(img_input):
     if DEBUG:
         print r
         cv2.imwrite(IMAGE_NAME + '-rotated.' + EXTENSION, img_r)
-        cv2.imshow('Best Rotation', img_r)
-        cv2.waitKey(0)
-        cv2.destroyAllWindows()
+        #cv2.imshow('Best Rotation', img_r)
+        #cv2.waitKey(0)
+        #cv2.destroyAllWindows()
     return img_r
 
 def graphRotationWidths(img_input):
@@ -111,16 +111,16 @@ def graphRotationWidths(img_input):
         width = parsePaper(img_r)
         rs.append(r)
         widths.append(width)
-    plt.figure()
-    plt.plot(rs,widths)
-    plt.plot([6.8,6.8],[0,1000], 'g')
-    plt.plot([34.0,34.0],[0,1000], 'r')
-    plt.plot([-20.0,-20.0],[0,1000], 'r')
-    plt.xlabel('Rotation')
-    plt.ylabel('Max Width')
-    plt.ylim((400,1000))
-    plt.show()
-        
+    # plt.figure()
+    # plt.plot(rs,widths)
+    # plt.plot([6.8,6.8],[0,1000], 'g')
+    # plt.plot([34.0,34.0],[0,1000], 'r')
+    # plt.plot([-20.0,-20.0],[0,1000], 'r')
+    # plt.xlabel('Rotation')
+    # plt.ylabel('Max Width')
+    # plt.ylim((400,1000))
+    # plt.show()
+
 
 def test():
     global DEBUG

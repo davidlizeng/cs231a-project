@@ -34,10 +34,10 @@ def constructLatex(paragraphs, paragraphBoxes, paragraphTypes):
             if topIndex == -1 or paragraphBoxes[i][1] < topIndex:
                 topIndex = i
         if paragraphTypes[topIndex] == 1:
-            latex = itl_paragraph.parseParagraph(paragraph[topIndex])
+            latex = itl_paragraph.parseParagraph(paragraphs[topIndex])
         elif paragraphTypes[topIndex] == 2:
-            latex = itl_eqblock.parseEqBlock(paragraph[topIndex])
-        latexPaper = addLatex(latexpaper, latex)
+            latex = itl_eqblock.parseEqBlock(paragraphs[topIndex])
+        latexPaper = addLatex(latexPaper, latex)
         del(paragraphs[topIndex])
         del(paragraphTypes[topIndex])
         del(paragraphBoxes[topIndex])
@@ -116,6 +116,6 @@ def test():
     global DEBUG
     DEBUG = True
     img = cv2.imread(IMAGE_FILE)
-    parsePaper(img)
+    print parsePaper(img)
 
 test()
