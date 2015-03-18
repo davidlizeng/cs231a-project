@@ -6,6 +6,7 @@ import itl_paragraph
 
 IMAGE_FILE = 'images/rotate1.png'
 [IMAGE_NAME, EXTENSION] = IMAGE_FILE.split('.')
+DEBUG = False
 
 def parsePaper(img):
     img_sob = cv2.Sobel(img,cv2.CV_8U,1,1,ksize=7)
@@ -94,7 +95,7 @@ def findBestRotation(img_input):
         cv2.imshow('Best Rotation', img_r)
         cv2.waitKey(0)
         cv2.destroyAllWindows()
-    return r
+    return img_r
 
 def test():
     global DEBUG

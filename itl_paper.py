@@ -3,9 +3,46 @@ import cv2
 import numpy as np
 import sys
 import itl_paragraph
+import rotation_fix
 
 IMAGE_FILE = 'images/paper2.png'
 [IMAGE_NAME, EXTENSION] = IMAGE_FILE.split('.')
+TEXT = 1
+EQUATION = 2
+
+def initializeLatexPaper():
+    latexPaper = ""
+    latexPaper += "\documentclass[11pt]{article} \n"
+    latexPaper += "\begin{document} \n"
+    return latexPaper
+
+def addLatex(latexPaper, latex, paragraphType):
+    if paragraphType == EQUATION:
+        latexPaper += "\begin{align*} \n"
+    latexPaper += latex
+    if paragraphType == TEXT:
+        latexPaper += "\\ \\ \n"
+    elif paragraphType == EQUATION:
+        latexPaper += "\end{align*} \n"
+    return latexPaper
+
+def constructLatex(paragraphs, paragraphBoxes, paragraphTypes):
+    latexPaper = initializeLatexPaper()
+    while len(paragraphs) > 0:
+        topIndex = -1
+        for i in range(len(paragraphs)):
+            if topIndex == -1 or paragraphBoxes[i][1] < topIndex:
+                topIndex = i
+        if paragraphTypes[topIndex] == 1:
+            latex = itl_paragraph.parseParagraph(paragraph[topIndex])
+        elif paragraphTypes[topIndex] == 2:
+            latex = itl_eqblock.parseEqBlock(paragraph[topIndex])
+        latexPaper = addLatex(latexpaper, latex)
+        del(paragraphs[topIndex])
+        del(paragraphTypes[topIndex])
+        del(paragraphBoxes[topIndex])
+
+    return latexPaper
 
 def parsePaper(img):
     img_gray = cv2.cvtColor(img, cv.CV_BGR2GRAY)
@@ -32,60 +69,47 @@ def parsePaper(img):
     paperWidth = img.shape[1]
     equationRects = []
     textRects = []
-    headerRects = []
-    maxLineHeight = 0
-    maxLineHeight2 = 0
     for rect in boundRects:
         if rect[2]*rect[3] > 250:
             if (rect[0]*1.0)/paperWidth > 0.225:
                 equationRects.append(rect)
             else:
-                lineRects = itl_paragraph.parseParagraph(img[rect[1]:rect[1]+rect[3],rect[0]:rect[0]+rect[2]])
-                lineSize = (rect[3]*1.0)/len(lineRects)
-                if lineSize > maxLineHeight:
-                    maxLineHeight2 = maxLineHeight
-                    maxLineHeight = lineSize
-                elif lineSize > maxLineHeight2:
-                    maxLineHeight2 = lineSize
-    for rect in boundRects:
-        if rect[2]*rect[3] > 250:
-            if not (rect[0]*1.0)/paperWidth > 0.225:
-                isHeader = False
-                lineRects = itl_paragraph.parseParagraph(img[rect[1]:rect[1]+rect[3],rect[0]:rect[0]+rect[2]])
-                lineSize = (rect[3]*1.0)/len(lineRects)
-                print lineSize
-                if lineSize >= maxLineHeight and lineSize >= maxLineHeight2 * 1.05:
-                    headerRects.append(rect)
-                else:
-                    textRects.append(rect)
+                textRects.append(rect)
 
     if DEBUG:
         for rect in textRects:
             cv2.rectangle(img, (rect[0], rect[1]), (rect[0] + rect[2], rect[1] + rect[3]), (0, 255, 0))
         for rect in equationRects:
             cv2.rectangle(img, (rect[0], rect[1]), (rect[0] + rect[2], rect[1] + rect[3]), (255, 0, 0))
-        for rect in headerRects:
-            cv2.rectangle(img, (rect[0], rect[1]), (rect[0] + rect[2], rect[1] + rect[3]), (0, 0, 255))
         cv2.imwrite(IMAGE_NAME + '-bounds.' + EXTENSION, img)
         print '%d equations found in %s' % (len(equationRects), IMAGE_FILE)
         print '%d texts found in %s' % (len(textRects), IMAGE_FILE)
-        print '%d headers found in %s' % (len(headerRects), IMAGE_FILE)
 
-    # Extract lines from paragraph
+    # Get paragraphs
     paragraphs = []
-    for rect in boundRects:
+    paragraphBoxes = []
+    paragraphTypes = []
+    for rect in textRects:
         [x, y, w, h] = rect
         paragraph = img[y:(y+h), x:(x+w)]
         paragraphs.append(paragraph)
+        paragraphBoxes.append(rect)
+        paragraphTypes.append(1)
+    for rect in equationRects:
+        [x, y, w, h] = rect
+        paragraph = img[y:(y+h), x:(x+w)]
+        paragraphs.append(paragraph)
+        paragraphBoxes.append(rect)
+        paragraphTypes.append(2)
 
-    for paragraph in paragraphs:
-        # TODO do something here
-        if DEBUG:
-            cv2.imshow('Paragraph', paragraph)
-            cv2.waitKey(0)
-            cv2.destroyAllWindows()
+    return constructLatex(paragraphs, paragraphBoxes, paragraphTypes)
 
-    return boundRects   
+def createLatexFile(imgFile, outFile):
+    img = cv2.imread(imgFile)
+    img = rotation_fix.findBestRotation(img)
+    latexPaper = parsePaper(img)
+    f = open(outFile)
+    f.write(latexPaper)
 
 def test():
     global DEBUG
