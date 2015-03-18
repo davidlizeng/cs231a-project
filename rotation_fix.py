@@ -15,7 +15,7 @@ def parsePaper(img):
     unused, img_threshold = cv2.threshold(img_sob, 0, 255, cv.CV_THRESH_OTSU + cv.CV_THRESH_BINARY)
 
     # Blur to get paragraph blocks
-    element = cv2.getStructuringElement(cv2.MORPH_RECT, (30, 30))
+    element = cv2.getStructuringElement(cv2.MORPH_RECT, (50, 50))
     morphed = cv2.morphologyEx(img_threshold, cv.CV_MOP_CLOSE, element)
 
     # Use RETR_EXTERNAL to remove boxes that are completely contained by the paragraph
@@ -73,13 +73,13 @@ def findBestRotation(img_input):
     img_r = genRotateImage(img, posr, center)
     posWidth = parsePaper(img_r)
     direction = 0
-    if negWidth < bestWidth and negWidth < posWidth:
+    if negWidth < bestWidth + 2 and negWidth < posWidth:
         direction = -1
-    elif posWidth < bestWidth and posWidth < negWidth:
+    elif posWidth < bestWidth + 2 and posWidth < negWidth:
         direction = 1
     if direction != 0:
         nextWidth = bestWidth
-        while bestWidth >= nextWidth:
+        while bestWidth + 2 >= nextWidth:
             bestWidth = nextWidth
             r = r + step*direction
             img_r = genRotateImage(img, r, center)
@@ -103,15 +103,19 @@ def graphRotationWidths(img_input):
     center = (img.shape[0]/2, img.shape[1]/2)
     rs = []
     widths = []
-    for r in range(-180,180):
+    for r in range(-100,100):
         img_r = genRotateImage(img, r, center)
         width = parsePaper(img_r)
         rs.append(r)
         widths.append(width)
     plt.figure()
     plt.plot(rs,widths)
+    plt.plot([6.8,6.8],[0,1000], 'g')
+    plt.plot([34.0,34.0],[0,1000], 'r')
+    plt.plot([-20.0,-20.0],[0,1000], 'r')
     plt.xlabel('Rotation')
     plt.ylabel('Max Width')
+    plt.ylim((400,1000))
     plt.show()
         
 
