@@ -5,25 +5,25 @@ import sys
 import itl_paragraph
 import rotation_fix
 
-IMAGE_FILE = 'images/paper2.png'
+IMAGE_FILE = 'images/paper1.png'
 [IMAGE_NAME, EXTENSION] = IMAGE_FILE.split('.')
 TEXT = 1
 EQUATION = 2
 
 def initializeLatexPaper():
     latexPaper = ""
-    latexPaper += "\documentclass[11pt]{article} \n"
-    latexPaper += "\begin{document} \n"
+    latexPaper += "\\documentclass[11pt]{article} \\n"
+    latexPaper += "\\begin{document} \\n"
     return latexPaper
 
 def addLatex(latexPaper, latex, paragraphType):
     if paragraphType == EQUATION:
-        latexPaper += "\begin{align*} \n"
+        latexPaper += "\\begin{align*} \\n"
     latexPaper += latex
     if paragraphType == TEXT:
-        latexPaper += "\\ \\ \n"
+        latexPaper += "\\\\ \\\\ \\n"
     elif paragraphType == EQUATION:
-        latexPaper += "\end{align*} \n"
+        latexPaper += "\\end{align*} \\n"
     return latexPaper
 
 def constructLatex(paragraphs, paragraphBoxes, paragraphTypes):
@@ -42,6 +42,7 @@ def constructLatex(paragraphs, paragraphBoxes, paragraphTypes):
         del(paragraphTypes[topIndex])
         del(paragraphBoxes[topIndex])
 
+    latexPaper += "\\end{document}"
     return latexPaper
 
 def parsePaper(img):
