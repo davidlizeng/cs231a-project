@@ -3,6 +3,7 @@ import cv2
 import numpy as np
 import sys
 import itl_paragraph
+import matplotlib.pyplot as plt
 
 IMAGE_FILE = 'images/rotate1.png'
 [IMAGE_NAME, EXTENSION] = IMAGE_FILE.split('.')
@@ -14,7 +15,7 @@ def parsePaper(img):
     unused, img_threshold = cv2.threshold(img_sob, 0, 255, cv.CV_THRESH_OTSU + cv.CV_THRESH_BINARY)
 
     # Blur to get paragraph blocks
-    element = cv2.getStructuringElement(cv2.MORPH_RECT, (20, 20))
+    element = cv2.getStructuringElement(cv2.MORPH_RECT, (30, 30))
     morphed = cv2.morphologyEx(img_threshold, cv.CV_MOP_CLOSE, element)
 
     # Use RETR_EXTERNAL to remove boxes that are completely contained by the paragraph
@@ -97,10 +98,28 @@ def findBestRotation(img_input):
         cv2.destroyAllWindows()
     return img_r
 
+def graphRotationWidths(img_input):
+    img = cv2.cvtColor(img_input, cv.CV_BGR2GRAY)
+    center = (img.shape[0]/2, img.shape[1]/2)
+    rs = []
+    widths = []
+    for r in range(-180,180):
+        img_r = genRotateImage(img, r, center)
+        width = parsePaper(img_r)
+        rs.append(r)
+        widths.append(width)
+    plt.figure()
+    plt.plot(rs,widths)
+    plt.xlabel('Rotation')
+    plt.ylabel('Max Width')
+    plt.show()
+        
+
 def test():
     global DEBUG
     DEBUG = True
     img = cv2.imread(IMAGE_FILE)
     findBestRotation(img)
+    #graphRotationWidths(img)
 
 test()
