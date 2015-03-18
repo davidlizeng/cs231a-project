@@ -8,7 +8,7 @@ import itl_line
 import itl_char
 
 DEBUG = False
-IMAGE_FILE = 'images/paragraph3.png'
+IMAGE_FILE = 'images/paragraph1.png'
 [IMAGE_NAME, EXTENSION] = IMAGE_FILE.split('.')
 
 STD_WIDTH = 700
@@ -67,7 +67,7 @@ def parseParagraph(img, returnBounds=False):
     if DEBUG:
         # for rect in adjustedRects:
         #     cv2.rectangle(img, (rect[0], rect[1]), (rect[0] + rect[2], rect[1] + rect[3]), (0, 255, 0))
-        cv2.imwrite(IMAGE_NAME + '-bounds.' + EXTENSION, img)
+        # cv2.imwrite(IMAGE_NAME + '-bounds.' + EXTENSION, img)
         print '%d lines found in %s' % (len(adjustedRects), IMAGE_FILE)
 
     # for rect in adjustedRects:
