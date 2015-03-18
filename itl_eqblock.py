@@ -25,7 +25,7 @@ def constructLatex(boundRects, img):
         cv2.waitKey(0)
         cv2.destroyAllWindows()
         latex += itl_equation.parseEquation(equation)
-        latex += "\\"
+        latex += "\\ \n"
         del(boundRects[topIndex])
     return latex  
 
@@ -91,16 +91,6 @@ def parseEqBlock(img, returnBounds=False):
         contourPoly = cv2.approxPolyDP(contours[i], 3, True)
         boundRect = cv2.boundingRect(contourPoly)
         boundRects.append(boundRect)
-
-    # Extract lines from paragraph
-    equations = []
-    for rect in boundRects:
-        [x, y, w, h] = rect
-        equation = img[y:(y+h), x:(x+w)]
-        cv2.imshow('Equation', equation)
-        cv2.waitKey(0)
-        cv2.destroyAllWindows()
-        equations.append(equation)
 
     # Returns list of lines
     # Each line is a list of words
