@@ -6,7 +6,7 @@ import sys
 
 import itl_char
 
-IMAGE_FILES = ['images/word1.png', 'images/word2.png', 'images/word3.png', 'images/word4.png']
+IMAGE_FILES = ['images/word1.png', 'images/word2.png', 'images/word3.png', 'images/word5.png', 'images/word4.png']
 
 DEBUG = False
 IMAGE_FILE = ''
@@ -74,39 +74,91 @@ def parseWord(img, returnBounds=False):
     # cv2.waitKey(0)
 
     # Extract characters from word
-    chars = []
-    for rect in adjustedRects:
-        [x, y, w, h] = rect
-        char = img[0:height, x:(x+w)]
-        chars.append(char)
-    # currentX = minX
-    # MIN_CHAR_WIDTH = 3
-    # MAX_CHAR_WIDTH = 20
-    # CHAR_BOX_STEP = 1
-    # while width - currentX >= MIN_CHAR_WIDTH:
-    #     bestScore = 0 # Start this at threshold!
-    #     bestVal = None
-    #     bestWidth = 0
-    #     for width in xrange(MIN_CHAR_WIDTH, MAX_CHAR_WIDTH + 1, CHAR_BOX_STEP):
-    #         rightX = currentX + width
-    #         charSlice = img[0:height, currentX:rightX]
-    #         val, score = itl_char.parseCharacter(charSlice, getScore=True)
-    #         if score > bestScore:
-    #             bestScore = score
-    #             bestWidth = width
-    #             bestVal = val
-    #     print bestWidth, bestScore, bestVal
-    #     # Add to chars array
-    #     currentX += bestWidth
+    # chars = []
+    # for rect in adjustedRects:
+    #     [x, y, w, h] = rect
+    #     char = img[0:height, x:(x+w)]
+    #     chars.append(char)
+    latex = []
+    img = itl_char.getCroppedImage(itl_char.getBinaryImage(img))
+    width = img.shape[1]
+    np.set_printoptions(threshold=np.inf, linewidth=np.inf)
+    columnSums = np.sum(img, axis=0)
+    currentX = 0
+    MIN_WIDTH = 2
+    MIN_CHAR_WIDTH = 4
+    MAX_CHAR_WIDTH = 15
+    THRESHOLD = .8
+    while width - currentX >= MIN_WIDTH:
+        if columnSums[currentX] == 0 or columnSums[currentX + 1] == 0:
+            currentX += 1
+            continue
+        start = MIN_CHAR_WIDTH
+        end = MAX_CHAR_WIDTH
+        if (currentX + 2 < width and columnSums[currentX + 2] == 0) or\
+           (currentX + 3 < width and columnSums[currentX + 3] == 0):
+            start = MIN_WIDTH
+            end = MIN_CHAR_WIDTH + 1
+        scores = [False] * (MAX_CHAR_WIDTH + 1)
+        values = [None] * (MAX_CHAR_WIDTH + 1)
+        brokeSpace = False
+        goodCharScore = False
+        for w in xrange(start, end):
+            rightX = currentX + w
+            charSlice = img[0:height, currentX:rightX]
+            # print charSlice
+            val, score = itl_char.parseCharacter(charSlice, getScore=True, isBinary=True)
+            scores[w] = score
+            if score > THRESHOLD and w >= MIN_CHAR_WIDTH:
+                goodCharScore = True
+            values[w] = val
+            if rightX >= width or columnSums[rightX] == 0:
+                brokeSpace = True
+                break
+
+        maxRunLength = 0
+        maxRunBestScore = 0.0
+        maxRunBestWidth = 0
+        currentRunLength = 0
+        currentRunBestScore = 0.0
+        currentRunBestWidth = 0
+        if brokeSpace:
+            maxRunBestWidth = w
+            maxRunBestScore = scores[w]
+            bestVal = values[w]
+        else:
+            for w in xrange(start, end + 1):
+                if scores[w] < THRESHOLD or values[w][0] in '.,:;':
+                    currentRunLength = 0
+                    currentRunBestScore = 0.0
+                    continue
+                currentRunLength += 1
+                if scores[w] > currentRunBestScore:
+                    currentRunBestScore = scores[w]
+                    currentRunBestWidth = w
+                if currentRunLength > maxRunLength or\
+                   (currentRunLength == maxRunLength and currentRunBestScore > maxRunBestScore):
+                    maxRunLength = currentRunLength
+                    maxRunBestScore = currentRunBestScore
+                    maxRunBestWidth = currentRunBestWidth
+
+        if maxRunBestWidth == 0:
+            break
+
+        bestVal = values[maxRunBestWidth]
+        # print '*****', maxRunBestWidth, maxRunBestScore, bestVal
+        # Add to chars array
+        currentX += maxRunBestWidth
+        latex.append(bestVal)
 
     if returnBounds:
         return chars
 
-    latex = []
-    for i in xrange(len(chars)):
-        char = chars[i]
-        charLatex = itl_char.parseCharacter(char)
-        latex.append(charLatex)
+    # latex = []
+    # for i in xrange(len(chars)):
+    #     char = chars[i]
+    #     charLatex = itl_char.parseCharacter(char)
+    #     latex.append(charLatex)
         # if DEBUG:
         #     cv2.imshow('%d' % i, char)
         #     cv2.waitKey(0)

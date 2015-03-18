@@ -6,8 +6,8 @@ from sklearn import linear_model
 
 PATH = 'training/'
 DICTIONARY_FILE = PATH + 'dictionary.txt'
-SAMPLES_FILE = PATH + 'samples_fs.data'
-RESPONSES_FILE = PATH + 'responses_fs.data'
+SAMPLES_FILE = PATH + 'samples_px.data'
+RESPONSES_FILE = PATH + 'responses_px.data'
 
 REGULAR = 0
 MATH = 1
@@ -48,7 +48,6 @@ if len(dictionary) == 0:
     print 'Loading model...'
     samples = np.loadtxt(SAMPLES_FILE, np.float32)
     responses = np.loadtxt(RESPONSES_FILE, np.float32)
-    print samples.shape, responses.shape
     fs_max = np.loadtxt(PATH + 'fs_max.data', np.float32)
     fs_min = np.loadtxt(PATH + 'fs_min.data', np.float32)
     fs_steps = (fs_max - fs_min) / FS_STEP
@@ -59,24 +58,48 @@ if len(dictionary) == 0:
     model.fit(samples, responses.ravel())
 
 
+# Make sure img is binary
+def getCroppedImage(img):
+    columnSums = np.sum(img, axis=0)
+    rowSums = np.sum(img, axis=1)
+    leftEdge = 0
+    rightEdge = img.shape[1]
+    topEdge = 0
+    bottomEdge = img.shape[0]
+    for leftEdge in xrange(leftEdge, img.shape[1]):
+        if columnSums[leftEdge] != 0:
+            break
+    for rightEdge in xrange(rightEdge, 0, -1):
+        if columnSums[rightEdge - 1] != 0:
+            break
+    for topEdge in xrange(topEdge, img.shape[0]):
+        if rowSums[topEdge] != 0:
+            break
+    for bottomEdge in xrange(bottomEdge, 0, -1):
+        if rowSums[bottomEdge - 1] != 0:
+            break
+    return img[topEdge:bottomEdge, leftEdge:rightEdge]
+
 def getBinaryImage(img):
     img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-    unused, img = cv2.threshold(img, 200, 1, cv.CV_THRESH_BINARY_INV)
+    unused, img = cv2.threshold(img, 220, 1, cv.CV_THRESH_BINARY_INV)
     return img
 
-def parseCharacter(img, getScore=False):
+# Returns (latexString, itl_char.CODE) tuple
+def parseCharacter(img, getScore=False, isBinary=False):
     # cv2.imshow('IMG', img)
     # cv2.waitKey(0)
 
     # Frey-Slate attributes
-    img = getFreySlateAttributes(img);
+    # img = getFreySlateAttributes(img);
 
     # Pixel Values as features
-    # img = cv2.resize(img, CHAR_BOX)
-    # img = cv2.cvtColor(img,cv2.COLOR_BGR2GRAY)
-    # img = np.float32(img.reshape((1, 400)))
-    # img = img / np.linalg.norm(img)
-    # print img.shape
+    if not isBinary:
+        img = getBinaryImage(img)
+    img = getCroppedImage(img)
+    img = cv2.resize(img, CHAR_BOX)
+    img = np.float32(img.reshape((1, 400)))
+    img = img / np.linalg.norm(img)
 
     # KNearest
     # val, results, n_response, distances = model.find_nearest(img, k = 1)

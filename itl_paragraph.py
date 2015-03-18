@@ -5,9 +5,10 @@ import numpy as np
 import sys
 
 import itl_line
+import itl_char
 
 DEBUG = False
-IMAGE_FILE = 'images/paragraph1.png'
+IMAGE_FILE = 'images/paragraph3.png'
 [IMAGE_NAME, EXTENSION] = IMAGE_FILE.split('.')
 
 STD_WIDTH = 700
@@ -99,12 +100,29 @@ def parseParagraph(img, returnBounds=False):
         #     cv2.imshow('%d' % i, line)
         #     cv2.waitKey(0)
 
-    # Returns list of lines
-    # Each line is a list of words
-    # Each word is a list of chars
-    # Each char is a tuple ('latexString', itl_char.CODE)
+    latex = constructLatex(latex)
     print latex
     return latex
+
+# List of lines
+# Each line is a list of words
+# Each word is a list of chars
+# Each char is a tuple ('latexString', itl_char.CODE)
+def constructLatex(latex):
+    inMath = False
+    s = ''
+    for line in latex:
+        for word in line:
+            for char in word:
+                if (char[1] == itl_char.MATH and not inMath) or\
+                   (char[1] != itl_char.MATH and inMath):
+                   s += '$'
+                   inMath = not inMath
+                s += char[0]
+            s += ' '
+    if inMath:
+        s += '$'
+    return s
 
 
 def test():
