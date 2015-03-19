@@ -1,5 +1,5 @@
 # Fdb version 3
-["pdflatex"] 1426747304 "final.tex" "final.pdf" "final" 1426747305
+["pdflatex"] 1426748115 "final.tex" "final.pdf" "final" 1426748117
   "/usr/local/texlive/2013/texmf-dist/tex/context/base/supp-pdf.mkii" 1337017135 71627 94eb9990bed73c364d7f53f960cc8c5b ""
   "/usr/local/texlive/2013/texmf-dist/tex/generic/oberdiek/etexcmds.sty" 1335995445 7612 c47308d923ec19888707b0f1792b326a ""
   "/usr/local/texlive/2013/texmf-dist/tex/generic/oberdiek/ifluatex.sty" 1303254447 7324 11d14f318d865f420e692d4e6c9c18c3 ""
@@ -109,8 +109,8 @@
   "eqblock1.png" 1426772308 5550 2af734e6fa892ce7d1aa9f5159bc858f ""
   "equation2-baseline.png" 1426772308 5270 85cb87c0cd605a37bb49931d9f789a7b ""
   "equation2-mst.png" 1426772308 5299 e446febd81d21f274a810dc0614fea21 ""
-  "final.aux" 1426747305 5814 50ac4b44026744d4ef80071e12023b5b ""
-  "final.tex" 1426747302 54170 83aa14488d3681387614b3455b3d8c14 ""
+  "final.aux" 1426748117 5814 51172685c510616bd62f8bb053363db7 ""
+  "final.tex" 1426748112 54178 5595224a2961a66e0b0d8bb3aa2cd094 ""
   "line1.png" 1426772308 9166 b8892ee8912a42058ff7bc4cc1c1df73 ""
   "locations.png" 1426772308 18992 3214d6342e17a252c2be6138876c6a0a ""
   "paper1-bounds.png" 1426772308 180464 66ced0ca33e7cee829bc3608dad3ce1c ""
@@ -127,6 +127,6 @@
   "word5-bounds.png" 1426772308 1563 0a0d6dae1d63a602ee4333e9ebab5d50 ""
   "word6-window.png" 1426772308 2577 d2e17f5a5dbc6ad35f65b51d12ad51ee ""
   (generated)
+  "final.aux"
   "final.log"
   "final.pdf"
-  "final.aux"

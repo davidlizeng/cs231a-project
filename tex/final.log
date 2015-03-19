@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.1415926-2.5-1.40.14 (TeX Live 2013) (format=pdflatex 2013.7.17)  18 MAR 2015 23:41
+This is pdfTeX, Version 3.1415926-2.5-1.40.14 (TeX Live 2013) (format=pdflatex 2013.7.17)  18 MAR 2015 23:55
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -779,13 +779,13 @@ LaTeX Warning: `h' float specifier changed to `ht'.
 <eqblock1.png, id=34, 273.27094pt x 100.87688pt>
 File: eqblock1.png Graphic file (type png)
  <use eqblock1.png>
-Package pdftex.def Info: eqblock1.png used on input line 148.
+Package pdftex.def Info: eqblock1.png used on input line 150.
 (pdftex.def)             Requested size: 231.26378pt x 85.37015pt.
 
 <eqblock1-morph.png, id=35, 702.625pt x 258.9675pt>
 File: eqblock1-morph.png Graphic file (type png)
  <use eqblock1-morph.png>
-Package pdftex.def Info: eqblock1-morph.png used on input line 155.
+Package pdftex.def Info: eqblock1-morph.png used on input line 157.
 (pdftex.def)             Requested size: 231.26378pt x 85.23824pt.
 
 
@@ -794,7 +794,7 @@ LaTeX Warning: `h' float specifier changed to `ht'.
 <eqblock1-morph2.png, id=36, 702.625pt x 258.9675pt>
 File: eqblock1-morph2.png Graphic file (type png)
  <use eqblock1-morph2.png>
-Package pdftex.def Info: eqblock1-morph2.png used on input line 162.
+Package pdftex.def Info: eqblock1-morph2.png used on input line 164.
 (pdftex.def)             Requested size: 231.26378pt x 85.23824pt.
 
 
@@ -805,33 +805,36 @@ y)> <./eqblock1.png>] <paragraph2-bounds.png, id=41, 702.625pt x 134.5025pt>
 File: paragraph2-bounds.png Graphic file (type png)
 
 <use paragraph2-bounds.png>
-Package pdftex.def Info: paragraph2-bounds.png used on input line 171.
+Package pdftex.def Info: paragraph2-bounds.png used on input line 175.
 (pdftex.def)             Requested size: 231.26378pt x 44.27101pt.
  <line1.png, id=42, 325.215pt x 20.075pt>
 File: line1.png Graphic file (type png)
 
 <use line1.png>
-Package pdftex.def Info: line1.png used on input line 178.
+Package pdftex.def Info: line1.png used on input line 182.
 (pdftex.def)             Requested size: 231.26378pt x 14.276pt.
  [5 <./eqblock1-morph.png (PNG copy)> <./eqblock1-morph2.png (PNG copy)> <./par
 agraph2-bounds.png (PNG copy)> <./line1.png>]
 <word3-bounds.png, id=47, 43.16125pt x 20.075pt>
 File: word3-bounds.png Graphic file (type png)
  <use word3-bounds.png>
-Package pdftex.def Info: word3-bounds.png used on input line 199.
+Package pdftex.def Info: word3-bounds.png used on input line 203.
 (pdftex.def)             Requested size: 108.405pt x 50.42657pt.
 
 <word1-window.png, id=48, 63.23625pt x 20.075pt>
 File: word1-window.png Graphic file (type png)
  <use word1-window.png>
-Package pdftex.def Info: word1-window.png used on input line 217.
+Package pdftex.def Info: word1-window.png used on input line 221.
 (pdftex.def)             Requested size: 108.405pt x 34.41496pt.
 
 <values.png, id=49, 489.83pt x 396.48125pt>
 File: values.png Graphic file (type png)
  <use values.png>
-Package pdftex.def Info: values.png used on input line 236.
+Package pdftex.def Info: values.png used on input line 240.
 (pdftex.def)             Requested size: 231.26378pt x 187.18713pt.
+
+
+LaTeX Warning: `h' float specifier changed to `ht'.
 
 
 LaTeX Warning: `h' float specifier changed to `ht'.
@@ -839,23 +842,23 @@ LaTeX Warning: `h' float specifier changed to `ht'.
 <locations.png, id=50, 506.89375pt x 294.09875pt>
 File: locations.png Graphic file (type png)
  <use locations.png>
-Package pdftex.def Info: locations.png used on input line 259.
+Package pdftex.def Info: locations.png used on input line 263.
 (pdftex.def)             Requested size: 231.26378pt x 134.17862pt.
  [6 <./word3-bounds.png (PNG copy)> <./word1-window.png (PNG copy)>]
 \pgf@layerbox@bg=\box64
 \pgf@layerboxsaved@bg=\box65
 
-<equation2-baseline.png, id=57, 193.72375pt x 49.18375pt>
+<equation2-baseline.png, id=54, 193.72375pt x 49.18375pt>
 File: equation2-baseline.png Graphic file (type png)
 
 <use equation2-baseline.png>
-Package pdftex.def Info: equation2-baseline.png used on input line 354.
+Package pdftex.def Info: equation2-baseline.png used on input line 358.
 (pdftex.def)             Requested size: 144.54pt x 36.69708pt.
 
-<equation2-mst.png, id=58, 193.72375pt x 49.18375pt>
+<equation2-mst.png, id=55, 193.72375pt x 49.18375pt>
 File: equation2-mst.png Graphic file (type png)
  <use equation2-mst.png>
-Package pdftex.def Info: equation2-mst.png used on input line 363.
+Package pdftex.def Info: equation2-mst.png used on input line 367.
 (pdftex.def)             Requested size: 144.54pt x 36.69708pt.
 
 [7 <./values.png> <./locations.png> <./equation2-baseline.png (PNG copy)> <./eq
@@ -866,31 +869,31 @@ LaTeX Warning: `h' float specifier changed to `ht'.
 [8] <word6-window.png, id=68, 77.28876pt x 27.10126pt>
 File: word6-window.png Graphic file (type png)
  <use word6-window.png>
-Package pdftex.def Info: word6-window.png used on input line 420.
+Package pdftex.def Info: word6-window.png used on input line 424.
 (pdftex.def)             Requested size: 108.405pt x 38.0155pt.
 
 <word5-bounds.png, id=69, 57.21375pt x 17.06375pt>
 File: word5-bounds.png Graphic file (type png)
  <use word5-bounds.png>
-Package pdftex.def Info: word5-bounds.png used on input line 431.
+Package pdftex.def Info: word5-bounds.png used on input line 435.
 (pdftex.def)             Requested size: 108.405pt x 32.33263pt.
 
 <paper2.png, id=70, 574.145pt x 145.54375pt>
 File: paper2.png Graphic file (type png)
  <use paper2.png>
-Package pdftex.def Info: paper2.png used on input line 442.
+Package pdftex.def Info: paper2.png used on input line 446.
 (pdftex.def)             Requested size: 231.26378pt x 58.62286pt.
 
 <paper2tex.png, id=71, 564.1075pt x 185.69376pt>
 File: paper2tex.png Graphic file (type png)
  <use paper2tex.png>
-Package pdftex.def Info: paper2tex.png used on input line 449.
+Package pdftex.def Info: paper2tex.png used on input line 453.
 (pdftex.def)             Requested size: 231.26378pt x 76.12926pt.
 
 <paper2out.png, id=72, 419.5675pt x 176.66pt>
 File: paper2out.png Graphic file (type png)
  <use paper2out.png>
-Package pdftex.def Info: paper2out.png used on input line 456.
+Package pdftex.def Info: paper2out.png used on input line 460.
 (pdftex.def)             Requested size: 231.26378pt x 97.37355pt.
  [9 <./word6-window.png (PNG copy)> <./word5-bounds.png (PNG copy)> <./paper2.p
 ng> <./paper2tex.png> <./paper2out.png>] [10
@@ -899,7 +902,7 @@ ng> <./paper2tex.png> <./paper2out.png>] [10
 Here is how much of TeX's memory you used:
  12738 strings out of 493315
  233066 string characters out of 6137904
- 290423 words of memory out of 5000000
+ 290467 words of memory out of 5000000
  15874 multiletter control sequences out of 15000+600000
  55897 words of font info for 123 fonts, out of 8000000 for 9000
  957 hyphenation exceptions out of 8191
@@ -922,7 +925,7 @@ live/2013/texmf-dist/fonts/type1/urw/courier/ucrr8a.pfb></usr/local/texlive/201
 st/fonts/type1/urw/times/utmbi8a.pfb></usr/local/texlive/2013/texmf-dist/fonts/
 type1/urw/times/utmr8a.pfb></usr/local/texlive/2013/texmf-dist/fonts/type1/urw/
 times/utmri8a.pfb>
-Output written on final.pdf (10 pages, 720289 bytes).
+Output written on final.pdf (10 pages, 720268 bytes).
 PDF statistics:
  137 PDF objects out of 1000 (max. 8388607)
  80 compressed objects within 1 object stream
