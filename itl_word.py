@@ -167,12 +167,20 @@ def parseWord(img, returnBounds=False):
 
 
 def test():
-    global DEBUG, IMAGE_FILE, IMAGE_NAME, EXTENSION
-    DEBUG = True
-    for IMAGE_FILE in IMAGE_FILES:
-        [IMAGE_NAME, EXTENSION] = IMAGE_FILE.split('.')
-        img = cv2.imread(IMAGE_FILE)
-        parseWord(img)
+    # global DEBUG, IMAGE_FILE, IMAGE_NAME, EXTENSION
+    # DEBUG = True
+    # for IMAGE_FILE in IMAGE_FILES:
+    #     [IMAGE_NAME, EXTENSION] = IMAGE_FILE.split('.')
+    #     img = cv2.imread(IMAGE_FILE)
+    #     parseWord(img)
+    img = cv2.imread('images/word6.png')
+    start = 4
+    height = img.shape[0]
+    for w in xrange(2, 30, 2):
+        color = (0, 0, 255) if (w == 10 or w == 20) else (255, 255, 150)
+        cv2.rectangle(img, (start, 0), (start + w, height), color)
+    cv2.imwrite('tex/word6-window.png', img)
+
 
 if __name__ == "__main__":
     test()

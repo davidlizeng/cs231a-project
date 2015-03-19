@@ -40,7 +40,7 @@ divided by the width of the box.'' This feature is useful for determining whethe
 
 In \cite{3}, Gupta et al. discuss methods for identifying document layout structure from images of documents. The key intuition behind the algorithm proposed in \cite{3} is that the various components of documents, in this case technical papers, can be identified using the features of the bounding boxes encapsulating each section as well as the relative positioning and ordering of said bounding boxes. Gupta et al. first preprocess their document images by thresholding at 80\% of the image intensity. Characters in the document are then located by identifying contours in the thresholded image and bounding boxes are formed around these characters. Bounding boxes that are close together are then combined horizontally to yield line level bounding boxes and combined vertically to obtain paragraph level bounding boxes. Following the construction of the paragraph level bounding boxes, features such as aspect ratio and average line height are used to differentiate between textual components and graphical components. At this point the the known structure of technical papers is leveraged to classify the previously found bounding boxes as various document components. An image representation is generated in which the previously found bounding boxes are indicated by filled white rectangles while the rest of the image is black. Horizontal and vertical image profile histograms of this image are then used to classify bounding boxes as containing the document title, authors, abstract, main body, and other layout components using known qualities of technical papers. For example, the title is a textual component located at the top of the document, has a high aspect ratio and is immediately followed by the authors filed. Once the bounding boxes are all classified as layout components of the document, the document is classified as one of several common technical paper formats, e.g. IEEE or LNCS. The format determined through classification then cements the layout structure of the document.
 
-In \cite{4}, Tapia and Rojas describes an algorithm for learning the appropriate \latex layout for a handwritten mathematical expression. The paper assumes that for a given expression, the individual symbols in the expressions have already been discovered and labeled, and a bounding box has been drawn around each. Given such a setup, Tapia and Rojas define a concept they call dominance. Each symbol dominates a region around it; for example, a summation symbol dominates the region above and below it, where subexpressions are usually located that define the range for the summation. To construct the appropriate \latex layout for the expression, Tapia and Rojas notice that \latex markup essentially forms a tree structure, where arguments, subscripts, and superscripts are essentially children of some given parent symbol. They devise a method for learning this tree structure. Each symbol is treated as a node and edges between two symbols are weighted based on the distance between the centroids of the bounding boxes of the two symbols. First, the concept of dominance is used to find a dominant baseline of symbols in an expression. The remaining symbols are attached to this baseline by finding the minimum spanning tree that includes the baseline. In terms of the \latex structure, the dominant baseline provides the sequence of top level symbols, whereas the branches of the minimum spanning tree that connect to the baseline are the arguments, superscripts, and subscripts of the baseline symbols. If these branches off of the baseline are complex enough, this process is recursively applied to find baselines for each branch, from which smaller minimum spanning trees are then built of the baseline for each of the branches.
+In \cite{4}, Tapia and Rojas describes an algorithm for learning the appropriate \latex layout for a handwritten mathematical expression. The paper assumes that for a given expression, the individual symbols in the expressions have already been discovered and labeled, and a bounding box has been drawn around each. Given such a setup, Tapia and Rojas define a concept they call dominance. Each symbol dominates a region around it; for example, a summation symbol dominates the region above and below it, where subexpressions are usually located that define the range for the summation. To construct the appropriate \latex layout for the expression, Tapia and Rojas notice that \latex markup essentially forms a tree structure, where arguments, subscripts, and superscripts are essentially children of some given parent symbol. They devise a method for learning this tree structure. Each symbol is treated as a node and edges between two symbols are weighted based on the distance between the centroids of the bounding boxes of the two symbols. First, the concept of dominance is used to find a dominant baseline of symbols in an expression. The remaining symbols are attached to this baseline by finding the minimum spanning tree that includes the baseline. In terms of the \latex structure, the dominant baseline provides the sequence of top level symbols, whereas the branches of the minimum spanning tree that connect to the baseline are the arguments, superscripts, and subscripts of the baseline symbols. If these branches off of the baseline are complex enough, this process is recursively applied to find baselines for each branch, from which smaller minimum spanning trees are then built of the baseline for each of the branches.   
 
 \subsection{Main Contributions of Our Work}
 
@@ -85,7 +85,7 @@ In order to rotate an image without accidentally cropping the image, the output 
 \beta &= \sin \theta
 \end{align*}
 \begin{align*}
-T &=
+T &= 
 \left[
 \begin{matrix}
 1 & 0 & {\max(w,h) - w\over{2}} \\
@@ -94,7 +94,7 @@ T &=
 \end{matrix}
 \right]
 I \\
-I' &=
+I' &= 
 \left[
 \begin{matrix}
 \alpha & \beta &  (1 - \alpha - \beta){\max(w,h)\over{2}}\\
@@ -207,13 +207,13 @@ Our second approach is an adaptation of the slice method explored in \cite{1}. I
 
 \subsubsection{Learning \latex Expression Layout}
 
-Transforming images of single line mathematical expressions requires us to not only recognize individual symbols used in the expression, but also the layout of the expression. To perform this, we used a simplified version of the method used in \cite{4}, which we will now describe in detail.
+Transforming images of single line mathematical expressions requires us to not only recognize individual symbols used in the expression, but also the layout of the expression. To perform this, we used a simplified version of the method used in \cite{4}, which we will now describe in detail. 
 
 The first step in transforming a mathematical expression to \latex markup is to classify each individual symbol in the expression. This is done by calling upon our character recognizer discussed in Section 3.2.3. The character recognizer gives, or classifies, each bounding box with a key which contains the appropriate \latex string for the symbol. Once symbols are matched with the individual \latex strings, the next step is to learn the structure of the expression to assemble theses strings together in a coherent fashion.
-
+ 
 To do this, we work with a few more attributes of each symbol. Each bounding box of a symbol is described by four values, $x_m$, $y_m$, $w$ and $h$, where $x_m$ and $y_m$ denote the $(x,y)$ coordinates of the top-left corner of the box and $w$ and $h$ denote the width and height of the box. Coordinates of pixels in the image have $x$ values that increase from left to right and $y$ values that increase from top down.
 
-For each bounding box detected in the image for an expression, we define three additional values. The \textit{centroid} of a symbol is a point in the bounding box that indicates, roughly, where the center of the symbol lies. The \textit{sup-threshold} of a symbol denotes the upper bound for the $y$ value of a superscript, while the \textit{sub-threshold} denotes the lower bound for the $y$ value of a subscript. Figure~\ref{fig:values} gives a visual representation for each of these definitions.
+For each bounding box detected in the image for an expression, we define three additional values. The \textit{centroid} of a symbol is a point in the bounding box that indicates, roughly, where the center of the symbol lies. The \textit{sup-threshold} of a symbol denotes the upper bound for the $y$ value of a superscript, while the \textit{sub-threshold} denotes the lower bound for the $y$ value of a subscript. Figure~\ref{fig:values} gives a visual representation for each of these definitions. 
 
 Each symbol is categorized as one of three types: \textit{ascendant}, \textit{descendant}, \textit{central}. These distinctions allow us to distinguish characters that are imbalanced in the $y$ direction. For example, characters like $\partial$ and $b$ are ascendant symbols, $\gamma$ and $p$ are descendant symbols, and $c$ and $\int$ are central symbols. Based on the type of the symbol, we compute the values for the centroid, sup-threshold, and sub-threshold differently, as shown in Table \ref{tab:values}. These values, together with $x_m$, $y_m$, $w$ and $h$ are used to compare locations between symbols, which we explain next.
 
@@ -239,7 +239,7 @@ Each symbol is categorized as one of three types: \textit{ascendant}, \textit{de
   \label{tab:values}
 \end{table}
 
-One of the main ideas presented in \cite{4} is the concept of dominance. Each symbol is capable of dominating some subset of five different regions: \textit{above}, \textit{below}, \textit{superscript}, \textit{subscript}, and \textit{subexpression}. Tapia and Rojas define a few additional regions in \cite{4}, but for the sake of simplicity, the five regions we have defined cover all of the symbols we currently support. The locations of each of these regions, relative to the bounding box, is show in Figure~\ref{fig:locations}. A symbol $A$ is said to dominate a symbol $B$ if $B$ lies in one of the regions dominated by $A$, and $B$ does not exceed $A$ in both width and height.
+One of the main ideas presented in \cite{4} is the concept of dominance. Each symbol is capable of dominating some subset of five different regions: \textit{above}, \textit{below}, \textit{superscript}, \textit{subscript}, and \textit{subexpression}. Tapia and Rojas define a few additional regions in \cite{4}, but for the sake of simplicity, the five regions we have defined cover all of the symbols we currently support. The locations of each of these regions, relative to the bounding box, is show in Figure~\ref{fig:locations}. A symbol $A$ is said to dominate a symbol $B$ if $B$ lies in one of the regions dominated by $A$, and $B$ does not exceed $A$ in both width and height. 
 \begin{figure}[h]
   \centering
     \includegraphics[width=3.2in]{locations.png}
@@ -248,7 +248,7 @@ One of the main ideas presented in \cite{4} is the concept of dominance. Each sy
 \end{figure}
 
 Now, given the image of the expression and the bounding box for each symbol, we wish to learn the \latex layout of the symbols. For example, consider the following expression
-\[ \sum_{n = -\infty}^\infty \left|\left\langle f, \frac{e^{inx}}{\sqrt{2\pi}} \right\rangle \right|^2 = \|f\|^2 \]
+\[ \sum_{n = -\infty}^\infty \left|\left\langle f, \frac{e^{inx}}{\sqrt{2\pi}} \right\rangle \right|^2 = \|f\|^2 \] 
 
 
 \begin{figure*}[h]
@@ -343,7 +343,7 @@ The actual \latex markup corresponding to this expression can be broken down int
   \label{fig:baseline}
 \end{figure}
 
-Once the dominant baseline is established, the centroids of the nodes in the baseline are connected from left to right to form a line structure. All remaining symbols are attached to the baseline nodes using Prim's algorithm for minimum spanning trees. For each branch of the spanning tree connected to the baseline, this process of finding the most dominated symbol, followed by finding the dominant baseline, and lastly constructing the minimum spanning tree is recursively repeated. Ultimately, this yields a tree like the one in Figure~\ref{fig:spanningTree}. The recursive layering of this algorithm naturally produces well-defined parent-child relationships between the nodes of the tree. For each parent symbol, child nodes in same dominated regions are grouped together as sibling nodes, which allows us to construct the \latex tree in Figure~\ref{fig:latexTree}. From the tree, we can construct the appropriate \latex markup string, since children either serve as arguments, superscripts, or subscripts of their parents.
+Once the dominant baseline is established, the centroids of the nodes in the baseline are connected from left to right to form a line structure. All remaining symbols are attached to the baseline nodes using Prim's algorithm for minimum spanning trees. For each branch of the spanning tree connected to the baseline, this process of finding the most dominated symbol, followed by finding the dominant baseline, and lastly constructing the minimum spanning tree is recursively repeated. Ultimately, this yields a tree like the one in Figure~\ref{fig:spanningTree}. The recursive layering of this algorithm naturally produces well-defined parent-child relationships between the nodes of the tree. For each parent symbol, child nodes in same dominated regions are grouped together as sibling nodes, which allows us to construct the \latex tree in Figure~\ref{fig:latexTree}. From the tree, we can construct the appropriate \latex markup string, since children either serve as arguments, superscripts, or subscripts of their parents. 
 
 \begin{figure}[h]
   \centering
