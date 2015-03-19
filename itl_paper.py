@@ -4,15 +4,24 @@ import numpy as np
 import sys
 import itl_paragraph
 import rotation_fix
+import itl_eqblock
 
 IMAGE_FILE = 'images/paper1.png'
+OUTPUT_FILE = 'genLatex.tex'
 [IMAGE_NAME, EXTENSION] = IMAGE_FILE.split('.')
 TEXT = 1
 EQUATION = 2
+DEBUG = False
+
+def displayImage(img):
+    cv2.imshow('Picture', img)
+    cv2.waitKey(0)
+    cv2.destroyAllWindows()
 
 def initializeLatexPaper():
     latexPaper = ""
     latexPaper += "\\documentclass[11pt]{article} \n"
+    latexPaper += "\usepackage{algorithm, algpseudocode, amsmath, amsfonts, cite, graphicx, icomma, multirow, url, xspace, tikz, qtree} \n"
     latexPaper += "\\begin{document} \n"
     return latexPaper
 
@@ -31,13 +40,13 @@ def constructLatex(paragraphs, paragraphBoxes, paragraphTypes):
     while len(paragraphs) > 0:
         topIndex = -1
         for i in range(len(paragraphs)):
-            if topIndex == -1 or paragraphBoxes[i][1] < topIndex:
+            if topIndex == -1 or paragraphBoxes[i][1] < paragraphBoxes[topIndex][1]:
                 topIndex = i
         if paragraphTypes[topIndex] == 1:
             latex = itl_paragraph.parseParagraph(paragraphs[topIndex])
         elif paragraphTypes[topIndex] == 2:
             latex = itl_eqblock.parseEqBlock(paragraphs[topIndex])
-        latexPaper = addLatex(latexPaper, latex)
+        latexPaper = addLatex(latexPaper, latex, paragraphTypes[topIndex])
         del(paragraphs[topIndex])
         del(paragraphTypes[topIndex])
         del(paragraphBoxes[topIndex])
@@ -94,14 +103,14 @@ def parsePaper(img):
         [x, y, w, h] = rect
         paragraph = img[y:(y+h), x:(x+w)]
         paragraphs.append(paragraph)
-        paragraphBoxes.append(rect)
-        paragraphTypes.append(1)
+        paragraphBoxes.append([x, y, w, h])
+        paragraphTypes.append(TEXT)
     for rect in equationRects:
         [x, y, w, h] = rect
         paragraph = img[y:(y+h), x:(x+w)]
         paragraphs.append(paragraph)
-        paragraphBoxes.append(rect)
-        paragraphTypes.append(2)
+        paragraphBoxes.append([x, y, w, h])
+        paragraphTypes.append(EQUATION)
 
     return constructLatex(paragraphs, paragraphBoxes, paragraphTypes)
 
@@ -109,7 +118,7 @@ def createLatexFile(imgFile, outFile):
     img = cv2.imread(imgFile)
     img = rotation_fix.findBestRotation(img)
     latexPaper = parsePaper(img)
-    f = open(outFile)
+    f = open(outFile, 'w+')
     f.write(latexPaper)
 
 def test():
@@ -118,4 +127,4 @@ def test():
     img = cv2.imread(IMAGE_FILE)
     print parsePaper(img)
 
-test()
+createLatexFile(IMAGE_FILE, OUTPUT_FILE)

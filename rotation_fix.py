@@ -94,11 +94,8 @@ def findBestRotation(img_input):
     img_r = cv2.warpAffine(img_invert, rotMat, (img.shape[1], img.shape[0]))
     img_r = (255 - img_r)
     if DEBUG:
-        print r
         cv2.imwrite(IMAGE_NAME + '-rotated.' + EXTENSION, img_r)
-        #cv2.imshow('Best Rotation', img_r)
-        #cv2.waitKey(0)
-        #cv2.destroyAllWindows()
+    img_r = cv2.cvtColor(img_r, cv.CV_GRAY2BGR)
     return img_r
 
 def graphRotationWidths(img_input):

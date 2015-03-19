@@ -12,29 +12,31 @@ IMAGE_FILE = 'images/eqblock1.png'
 
 STD_WIDTH = 700
 
+def displayImage(img):
+    cv2.imshow('Picture', img)
+    cv2.waitKey(0)
+    cv2.destroyAllWindows()
+
 def constructLatex(boundRects, img):
     latex = ""
-    topIndex = -1
     while len(boundRects) > 0:
+        topIndex = -1
         for i in range(len(boundRects)):
-            if topIndex == -1 or boundRects[i][1] < topIndex:
+            if topIndex == -1 or boundRects[i][1] < boundRects[topIndex][1]:
                 topIndex = i
-        [x, y, w, h] = boundRects[i]
+        [x, y, w, h] = boundRects[topIndex]
         equation = img[y:(y+h), x:(x+w)]
-        cv2.imshow('Equation', equation)
-        cv2.waitKey(0)
-        cv2.destroyAllWindows()
         latex += itl_equation.parseEquation(equation)
-        latex += "\\ \n"
+        latex += "\\\\ \n"
         del(boundRects[topIndex])
     return latex  
 
 # Paragraph image img
-def parseEqBlock(img, returnBounds=False):
+def parseEqBlock(img_input, returnBounds=False):
     # Standardize paragraph to have a width of STD_WIDTH pixels
-    w = img.shape[1]
+    w = img_input.shape[1]
     scaleFactor = float(STD_WIDTH) / w
-    img = cv2.resize(img, (0,0), fx=scaleFactor, fy=scaleFactor)
+    img = cv2.resize(img_input, (0,0), fx=scaleFactor, fy=1)
 
     img_gray = cv2.cvtColor(img, cv.CV_BGR2GRAY)
     blur = cv2.GaussianBlur(img_gray, (5, 5), 0)
@@ -45,7 +47,7 @@ def parseEqBlock(img, returnBounds=False):
 
     # Blur in the horizontal direction to get lines
     print returnBounds
-    element = cv2.getStructuringElement(cv2.MORPH_RECT, (200, 10) if returnBounds else (40, 10))
+    element = cv2.getStructuringElement(cv2.MORPH_RECT, (200, 10) if returnBounds else (500, 10))
     morphed = cv2.morphologyEx(img_threshold, cv.CV_MOP_CLOSE, element)
     if DEBUG:
         cv2.imwrite(IMAGE_NAME + '-morph.' + EXTENSION, morphed)
@@ -83,20 +85,21 @@ def parseEqBlock(img, returnBounds=False):
 
     for rect in adjustedRects:
         cv2.rectangle(morphed, (rect[0], rect[1]), (rect[0] + rect[2], rect[1] + rect[3]), 255, thickness=-1)
-    if DEBUG:
+    if DEBUG or True:
         cv2.imwrite(IMAGE_NAME + '-morph2.' + EXTENSION, morphed)
     contours, hierarchy = cv2.findContours(morphed, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
-    boundRects = []
+    rects = []
     for i in xrange(len(contours)):
         contourPoly = cv2.approxPolyDP(contours[i], 3, True)
         boundRect = cv2.boundingRect(contourPoly)
-        boundRects.append(boundRect)
+        rect = [int(round((1.0*boundRect[0])/scaleFactor)), boundRect[1], int(round((1.0*boundRect[2])/scaleFactor)), boundRect[3]]
+        rects.append(boundRect)
 
     # Returns list of lines
     # Each line is a list of words
     # Each word is a list of chars
     # Each char is a tuple ('latexString', itl_char.CODE)
-    return constructLatex(boundRects, img)
+    return constructLatex(rects, img_input)
 
 
 def test():
