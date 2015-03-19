@@ -3,30 +3,133 @@ import cv2
 import numpy as np
 import sys
 import math
+import itl_char
 from collections import deque
 
 DEBUG = False
-IMAGE_FILE = 'images/equation5.png'
+IMAGE_FILE = 'images/equation2.png'
 [IMAGE_NAME, EXTENSION] = IMAGE_FILE.split('.')
 
 symbol_dict = {
-    'e'         : ('c', ('subscr', 'supscr')),
-    'f'         : ('c', ('subscr', 'supscr')),
-    'i'         : ('a', ('subscr', 'supscr')),
-    'n'         : ('c', ('subscr', 'supscr')),
-    'x'         : ('c', ('subscr', 'supscr')),
-    '2'         : ('a', ('subscr', 'supscr')),
-    '\\pi'      : ('c', ('subscr', 'supscr')),
-    '\\infty'   : ('c', ('subscr', 'supscr')),
-    '='         : ('c', ()),
-    '\\sum'     : ('c', ('above', 'below')),
-    '|'         : ('c', ('subscr', 'supscr')),
-    '\\langle'  : ('c', ('subscr', 'supscr')),
-    '\\rangle'  : ('c', ('subscr', 'supscr')),
-    '-'         : ('c', ('above', 'below')),
-    '\\sqrt'    : ('c', ('subexp',)),
-    ','         : ('d', ()),
-    '\\frac'    : ('c', ('above', 'below')),
+    'a'               : ('c', ('subscr', 'supscr')),
+    'b'               : ('a', ('subscr', 'supscr')),
+    'c'               : ('c', ('subscr', 'supscr')),
+    'd'               : ('a', ('subscr', 'supscr')),
+    'e'               : ('c', ('subscr', 'supscr')),
+    'f'               : ('c', ('subscr', 'supscr')),
+    'g'               : ('d', ('subscr', 'supscr')),
+    'h'               : ('a', ('subscr', 'supscr')),
+    'i'               : ('c', ('subscr', 'supscr')),
+    'j'               : ('d', ('subscr', 'supscr')),
+    'k'               : ('a', ('subscr', 'supscr')),
+    'l'               : ('a', ('subscr', 'supscr')),
+    'm'               : ('c', ('subscr', 'supscr')),
+    'n'               : ('c', ('subscr', 'supscr')),
+    'o'               : ('c', ('subscr', 'supscr')),
+    'p'               : ('d', ('subscr', 'supscr')),
+    'q'               : ('d', ('subscr', 'supscr')),
+    'r'               : ('c', ('subscr', 'supscr')),
+    's'               : ('c', ('subscr', 'supscr')),
+    't'               : ('a', ('subscr', 'supscr')),
+    'u'               : ('c', ('subscr', 'supscr')),
+    'v'               : ('c', ('subscr', 'supscr')),
+    'w'               : ('c', ('subscr', 'supscr')),
+    'x'               : ('c', ('subscr', 'supscr')),
+    'y'               : ('d', ('subscr', 'supscr')),
+    'z'               : ('c', ('subscr', 'supscr')),
+    'A'               : ('a', ('subscr', 'supscr')),
+    'B'               : ('a', ('subscr', 'supscr')),
+    'C'               : ('a', ('subscr', 'supscr')),
+    'D'               : ('a', ('subscr', 'supscr')),
+    'E'               : ('a', ('subscr', 'supscr')),
+    'F'               : ('a', ('subscr', 'supscr')),
+    'G'               : ('a', ('subscr', 'supscr')),
+    'H'               : ('a', ('subscr', 'supscr')),
+    'I'               : ('a', ('subscr', 'supscr')),
+    'J'               : ('a', ('subscr', 'supscr')),
+    'K'               : ('a', ('subscr', 'supscr')),
+    'L'               : ('a', ('subscr', 'supscr')),
+    'M'               : ('a', ('subscr', 'supscr')),
+    'N'               : ('a', ('subscr', 'supscr')),
+    'O'               : ('a', ('subscr', 'supscr')),
+    'P'               : ('a', ('subscr', 'supscr')),
+    'Q'               : ('a', ('subscr', 'supscr')),
+    'R'               : ('a', ('subscr', 'supscr')),
+    'S'               : ('a', ('subscr', 'supscr')),
+    'T'               : ('a', ('subscr', 'supscr')),
+    'U'               : ('a', ('subscr', 'supscr')),
+    'V'               : ('a', ('subscr', 'supscr')),
+    'W'               : ('a', ('subscr', 'supscr')),
+    'X'               : ('a', ('subscr', 'supscr')),
+    'Y'               : ('a', ('subscr', 'supscr')),
+    'Z'               : ('a', ('subscr', 'supscr')),
+    '0'               : ('a', ('supscr',)),
+    '1'               : ('a', ('supscr',)),
+    '2'               : ('a', ('supscr',)),
+    '3'               : ('a', ('supscr',)),
+    '4'               : ('a', ('supscr',)),
+    '5'               : ('a', ('supscr',)),
+    '6'               : ('a', ('supscr',)),
+    '7'               : ('a', ('supscr',)),
+    '8'               : ('a', ('supscr',)),
+    '9'               : ('a', ('supscr',)),
+    '\\alpha'         : ('c', ('subscr', 'supscr')),
+    '\\beta'          : ('a', ('subscr', 'supscr')),
+    '\\gamma'         : ('d', ('subscr', 'supscr')),
+    '\\delta'         : ('a', ('subscr', 'supscr')),
+    '\\epsilon'       : ('c', ('subscr', 'supscr')),
+    '\\varepsilon'    : ('c', ('subscr', 'supscr')),
+    '\\zeta'          : ('c', ('subscr', 'supscr')),
+    '\\eta'           : ('d', ('subscr', 'supscr')),
+    '\\theta'         : ('a', ('subscr', 'supscr')),
+    '\\iota'          : ('c', ('subscr', 'supscr')),
+    '\\kappa'         : ('c', ('subscr', 'supscr')),
+    '\\lambda'        : ('a', ('subscr', 'supscr')),
+    '\\mu'            : ('d', ('subscr', 'supscr')),
+    '\\nu'            : ('c', ('subscr', 'supscr')),
+    '\\xi'            : ('c', ('subscr', 'supscr')),
+    '\\pi'            : ('c', ('subscr', 'supscr')),
+    '\\rho'           : ('d', ('subscr', 'supscr')),
+    '\\sigma'         : ('c', ('subscr', 'supscr')),
+    '\\tau'           : ('c', ('subscr', 'supscr')),
+    '\\upsilon'       : ('c', ('subscr', 'supscr')),
+    '\\phi'           : ('c', ('subscr', 'supscr')),
+    '\\varphi'        : ('d', ('subscr', 'supscr')),
+    '\\chi'           : ('d', ('subscr', 'supscr')),
+    '\\psi'           : ('c', ('subscr', 'supscr')),
+    '\\omega'         : ('c', ('subscr', 'supscr')),
+    '\\infty'         : ('c', ('subscr', 'supscr')),
+    '\\to'            : ('c', ()),
+    '\\partial'       : ('c', ('subscr', 'supscr')),
+    '\\nabla'         : ('c', ('subscr', 'supscr')),
+    '='               : ('c', ()),
+    '\\neq'           : ('c', ()),
+    '\\leq'           : ('c', ()),
+    '\\geq'           : ('c', ()),
+    '<'               : ('c', ()),
+    '>'               : ('c', ()),
+    '\\sum'           : ('c', ('above', 'below')),
+    '\\prod'          : ('c', ('above', 'below')),
+    '\\int'           : ('c', ('subscr', 'supscr')),
+    '|'               : ('c', ('subscr', 'supscr')),
+    '\\left('         : ('c', ()),
+    '\\right)'        : ('c', ('subscr', 'supscr')),
+    '\\left['         : ('c', ()),
+    '\\right]'        : ('c', ('subscr', 'supscr')),
+    '\\left\\{'       : ('c', ()),
+    '\\right\\}'      : ('c', ('subscr', 'supscr')),
+    '\\left\\langle'  : ('c', ()),
+    '\\right\\rangle' : ('c', ('subscr', 'supscr')),
+    '+'               : ('c', ()),
+    '-'               : ('c', ('above', 'below')),
+    '/'               : ('c', ()),
+    '*'               : ('c', ()),
+    '\\cdot'          : ('c', ()),
+    '\\times'         : ('c', ()),
+    '\\sqrt'          : ('c', ('subexp',)),
+    ','               : ('d', ()),
+    '.'               : ('d', ()),
+    '\\frac'          : ('c', ('above', 'below')),
 }
 
 class Symbol:
@@ -89,7 +192,7 @@ class Symbol:
         inDomRegion = False
         for region in self.range:
             inDomRegion |= Symbol.domFunc[region](self, other)
-        return inDomRegion
+        return inDomRegion and (self.w >= other.w or self.h >= other.h)
 
     def distance(self, other):
         c1 = self.centroid()
@@ -135,10 +238,10 @@ class CenSymbol(Symbol):
         Symbol.__init__(self, x, y, w, h, t, r, k)
 
     def supThreshold(self):
-        return self.y + 0.2*self.h
+        return self.y + 0.25*self.h
 
     def subThreshold(self):
-        return self.y + 0.8*self.h
+        return self.y + 0.75*self.h
 
     def centroid(self):
         return (self.x + 0.5*self.w, self.y + 0.5*self.h)
@@ -160,8 +263,13 @@ def findDomSymbol(L):
     bestPerim = 0
     for i in xrange(len(L)):
         if L[i].perimeter() > bestPerim:
-            bestPerim = L[i].perimeter()
-            bestInd = i
+            isDominated = False
+            for j in xrange(len(L)):
+                if i != j:
+                    isDominated |= L[j].dominates(L[i])
+            if not isDominated:
+                bestPerim = L[i].perimeter()
+                bestInd = i
     return L[bestInd]
 
 # L should be sorted by x value
@@ -186,7 +294,6 @@ def findBaseLine(L):
     dominated = sorted(dominated, reverse=True)
     for d in dominated:
         baseline.pop(d)
-    print 'baseline', baseline
     return baseline
 
 
@@ -226,7 +333,6 @@ def findSymbolTree(L):
 
     baseline = findBaseLine(L)
     tree = findMST(L, baseline)
-    print 'tree', tree
     return tree, baseline
 
 
@@ -272,7 +378,6 @@ class ParentNode:
         return strings
 
 def findConnectedComponent(L, source, tree, bset):
-    agg = [source]
     cc = [L[source]]
     q = deque()
     q.append(source)
@@ -284,10 +389,8 @@ def findConnectedComponent(L, source, tree, bset):
         for nbr in tree[ind]:
             if nbr not in used:
                 used.add(nbr)
-                agg.append(nbr)
                 cc.append(L[nbr])
                 q.append(nbr)
-    print 'agg', agg
     return sorted(cc, key=lambda x: (x.minX(), x.minY()))
 
 
@@ -384,30 +487,41 @@ def handleSpecialCases(L):
             break
     return newL
 
+
+def translateKey(key):
+    ls = key[0]
+    if ls == '(' or ls == '[' or ls == '\\{':
+        return '\\left' + ls
+    elif ls == ')' or ls == ']' or ls == '\\}':
+        return '\\right' + ls
+    else:
+        return ls
+
+
 # equation image
 def parseEquation(img):
     img_gray = cv2.cvtColor(img, cv.CV_BGR2GRAY)
     #img_inv = 255 - img_gray
-    print img_gray.shape
     # img_lap = cv2.Laplacian(img_gray, cv2.CV_8U)
     # if DEBUG:
     #     cv2.imwrite(IMAGE_NAME + '-lap.' + EXTENSION, img_lap)
-    unused, img_threshold = cv2.threshold(img_gray, 200, 255, cv.CV_THRESH_BINARY_INV)
+    unused, img_threshold = cv2.threshold(img_gray, 220, 255, cv.CV_THRESH_BINARY_INV)
     if DEBUG:
         cv2.imwrite(IMAGE_NAME + '-thresh.' + EXTENSION, img_threshold)
     # Blur in the horizontal direction to get lines
-    morph_size = (1, 2)
-    element = cv2.getStructuringElement(cv2.MORPH_RECT, morph_size)
-    morphed = cv2.morphologyEx(img_threshold, cv.CV_MOP_CLOSE, element)
-    if DEBUG:
-        cv2.imwrite(IMAGE_NAME + '-morph.' + EXTENSION, morphed)
+    morph_size = (0, 0)
+    # element = cv2.getStructuringElement(cv2.MORPH_RECT, morph_size)
+    # morphed = cv2.morphologyEx(img_threshold, cv.CV_MOP_CLOSE, element)
+    # if DEBUG:
+    #     cv2.imwrite(IMAGE_NAME + '-morph.' + EXTENSION, morphed)
     # Use RETR_EXTERNAL to remove boxes that are completely contained by the word
-    contours, hierarchy = cv2.findContours(morphed, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_NONE)
+    contours, hierarchy = cv2.findContours(img_threshold, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_NONE)
     boundRects = []
     for i in xrange(len(contours)):
         contourPoly = cv2.approxPolyDP(contours[i], 0.25, True)
         boundRect = cv2.boundingRect(contourPoly)
-        boundRects.append((boundRect[0]-morph_size[0], boundRect[1]-morph_size[1], boundRect[2]+ morph_size[0], boundRect[3]))
+        if boundRect[2] * boundRect[3] > 1:
+            boundRects.append((boundRect[0]-morph_size[0], boundRect[1]-morph_size[1], boundRect[2]+ morph_size[0], boundRect[3]))
 
     # # Filter bounding rectangles that are not an entire line
     # # Take the maximum height among all bounding boxes
@@ -418,11 +532,11 @@ def parseEquation(img):
     # heightThresh = .25 * maxHeight
     # boundRects = [rect for rect in boundRects if rect[3] > heightThresh]
 
-    if DEBUG:
-        for rect in boundRects:
-            cv2.rectangle(img, (rect[0], rect[1]), (rect[0] + rect[2], rect[1] + rect[3]), (0, 255, 0))
-        cv2.imwrite(IMAGE_NAME + '-bounds.' + EXTENSION, img)
-        print '%d words found in %s' % (len(boundRects), IMAGE_FILE)
+    # if DEBUG:
+        # for rect in boundRects:
+        #     cv2.rectangle(img, (rect[0], rect[1]), (rect[0] + rect[2], rect[1] + rect[3]), (0, 255, 0))
+        # cv2.imwrite(IMAGE_NAME + '-bounds.' + EXTENSION, img)
+        # print '%d words found in %s' % (len(boundRects), IMAGE_FILE)
 
     sortedRects = sorted(boundRects, key=lambda x:(x[0], x[1]))
     # words = []
@@ -436,42 +550,45 @@ def parseEquation(img):
     #     if DEBUG:
     #         cv2.imshow('Word', word)
     #         cv2.waitKey(0)
-    # johns = ['n', '-', '-', '\\sum', '\\infty', '-', '\\infty', '|', '\\langle',
-    #     'f', ',', '-', '\\sqrt', 'e', 'i', '2', 'n', '\\pi', 'x', '\\rangle',
+    # keys = ['n', '-', '-', '\\sum', '\\infty', '-', '\\infty', '|', '\\langle',
+    #     'f', ',', '-', 'e', '\\sqrt', 'i', 'n', '2', '\\pi', 'x', '\\rangle',
     #     '|', '2', '-', '-', '|', '|', 'f', '|', '|', '2'
     # ]
-    # L = []
-    # for j in xrange(len(johns)):
-    #     L.append(buildSymbol(johns[j], *(sortedRects[j])))
-    # L = handleSpecialCases(L)
-    # death = [l.key for l in L]
-    # print death
-    # tree, baseline = findSymbolTree(L)
+    keys = []
+    for j in xrange(len(sortedRects)):
+        x, y, w, h = sortedRects[j]
+        img_bb = img[y:y+h, x:x+w]
+        key = itl_char.parseCharacter(img_bb)
+        keys.append(translateKey(key))
+    L = []
+    for j in xrange(len(keys)):
+        L.append(buildSymbol(keys[j], *(sortedRects[j])))
+    L = handleSpecialCases(L)
+    tree, baseline = findSymbolTree(L)
 
-    # for i in xrange(len(L)):
-    #     c = L[i].centroid()
-    #     rounded = (int(round(c[0])), int(round(c[1])))
-    #     if i in baseline:
-    #         cv2.circle(img, rounded, 3, (255, 0, 0), 2)
-    #     else:
-    #         cv2.circle(img, rounded, 3, (0, 0, 255), 2)
-    # for i in xrange(len(L)):
-    #     for j in tree[i]:
-    #         c1 = L[i].centroid()
-    #         c2 = L[j].centroid()
-    #         r1 = (int(round(c1[0])), int(round(c1[1])))
-    #         r2 = (int(round(c2[0])), int(round(c2[1])))
-    #         if i in baseline and j in baseline:
-    #             cv2.line(img, r1, r2, (255, 0, 0))
-    #         else:
-    #             cv2.line(img, r1, r2, (0, 0, 255))
-    # cv2.circle(img, (0,0) , 3, (255, 0, 0), 2)
-    # cv2.imwrite(IMAGE_NAME + '-mst.' + EXTENSION, img)
+    for i in xrange(len(L)):
+        c = L[i].centroid()
+        rounded = (int(round(c[0])), int(round(c[1])))
+        if i in baseline:
+            cv2.circle(img, rounded, 2, (255, 0, 0), 1)
+        else:
+            cv2.circle(img, rounded, 2, (0, 0, 255), 1)
+    for i in xrange(len(L)):
+        for j in tree[i]:
+            c1 = L[i].centroid()
+            c2 = L[j].centroid()
+            r1 = (int(round(c1[0])), int(round(c1[1])))
+            r2 = (int(round(c2[0])), int(round(c2[1])))
+            if i in baseline and j in baseline:
+                cv2.line(img, r1, r2, (255, 0, 0))
+            else:
+                cv2.line(img, r1, r2, (0, 0, 255))
+    cv2.imwrite(IMAGE_NAME + '-mst.' + EXTENSION, img)
 
-    # node = buildLaTeXTree(L)
-    # print node.str()
-
-    return boundRects
+    node = buildLaTeXTree(L)
+    node_str = node.str()
+    print 'latex string:',  node_str
+    return node_str
 
 
 def test():
